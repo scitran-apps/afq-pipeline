@@ -1,0 +1,190 @@
+#! /bin/bash
+#
+#
+
+CONTAINER="[scitran/fslmerge]"
+echo -e "$CONTAINER  Initiated"
+
+
+###############################################################################
+# Built to flywheel-v0 spec.
+FLYWHEEL_BASE=/flywheel/v0
+OUTPUT_DIR=$FLYWHEEL_BASE/output
+INPUT_DIR=$FLYWHEEL_BASE/input
+MANIFEST=$FLYWHEEL_BASE/manifest.json
+CONFIG_FILE=$FLYWHEEL_BASE/config.json
+
+
+###############################################################################
+# Configure the ENV
+chmod +x /etc/fsl/5.0/fsl.sh
+source /etc/fsl/5.0/fsl.sh
+
+
+###############################################################################
+# Initialize config parameters
+catTime=' '
+catX=' '
+catY=' '
+catX=' '
+auto=' '
+catTR=' '
+
+###############################################################################
+# Generate flags from the manifest
+
+catTime_flag=$(jq -r <$MANIFEST '''.config.catTime.id')
+catX_flag=$(jq -r <$MANIFEST '''.config.catX.id')
+catY_flag=$(jq -r <$MANIFEST '''.config.catY.id')
+catZ_flag=$(jq -r <$MANIFEST '''.config.catZ.id')
+auto_flag=$(jq -r <$MANIFEST '''.config.auto.id')
+catTR_flag=$(jq -r <$MANIFEST '''.config.catTR.id')
+
+
+###############################################################################
+# Parse config options from CONFIG file or MANIFEST
+
+if [[ -f $CONFIG_FILE ]]; then
+  eval $(jq -r '.config | to_entries[] | "config_\(.key)=\(.value)"' $CONFIG_FILE)
+else
+  CONFIG_FILE=$MANIFEST
+  eval $(jq -r '.config | to_entries[] | "config_\(.key)=\(.value.default)"' $CONFIG_FILE)
+fi
+
+# Boolean parsing
+if [[ $config_catTime == 'true' ]]; then
+  catTime=$catTime_flag
+fi
+if [[ $config_catX == 'true' ]]; then
+  catX=$catX_flag
+fi
+if [[ $config_catY == 'true' ]]; then
+  catY=$catY_flag
+fi
+if [[ $config_catZ == 'true' ]]; then
+  catZ=$catZ_flag
+fi
+if [[ $config_auto == 'true' ]]; then
+  auto=$auto_flag
+fi
+if [[ $config_base_outname != 'none' ]]; then
+  output_file_base="$config_base_outname"
+fi
+if [[ $config_catTR == 0 ]]; then
+  TR=' '
+  catTR=' '
+else
+  catTR=$catTR_flag
+  TR=$config_catTR
+fi
+
+
+###############################################################################
+# Compile options string
+
+OPTIONS="$catTime $catX $catY $catZ $auto $catTR $TR"
+
+
+###############################################################################
+# Generate paths to input data
+
+NIFTI_1=$(find $INPUT_DIR/NIFTI_1/* -type f -name "*.nii*" | head -1)
+BVAL_1=$(find $INPUT_DIR/BVAL_1/* -type f -name "*.bval*" | head -1)
+BVEC_1=$(find $INPUT_DIR/BVEC_1/* -type f -name "*.bvec*" | head -1)
+
+if [[ -d $INPUT_DIR/NIFTI_2 ]]; then
+  NIFTI_2=$(find $INPUT_DIR/NIFTI_2/* -type f -name "*.nii*" | head -1)
+else
+  NIFTI_2=''
+fi
+
+if [[ -d $INPUT_DIR/BVAL_2 ]]; then
+  BVAL_2=$(find $INPUT_DIR/BVAL_2/* -type f -name "*.bval*" | head -1)
+else
+  BVAL_2=''
+fi
+
+if [[ -d $INPUT_DIR/BVEC_2 ]]; then
+  BVEC_2=$(find $INPUT_DIR/BVEC_2/* -type f -name "*.bvec*" | head -1)
+else
+  BVEC_2=''
+fi
+
+###############################################################################
+# Merge functions for diffusion data
+
+merge_bvec () {
+  for L in $(seq 3); do
+    linea=$(sed -n "$L"p "$1" | tr -d "\n")
+    lineb=$(sed -n "$L"p "$2")
+    echo -e "$linea\t$lineb" >> "$3"
+  done
+}
+
+merge_bval () {
+  bvala=$(cat "$1" | tr -d "\n")
+  bvalb=$(cat "$2")
+  echo -e "$bvala\t$bvalb" >> "$3"
+}
+
+
+###############################################################################
+# RUN the MERGE Algorithm
+exit_status=0
+DO_MERGE=0
+
+if [[ -n "$NIFTI_1" ]] && [[ -n "$NIFTI_2" ]]; then
+  DO_MERGE=1
+  echo "$CONTAINER  Running fslmerge on $NIFTI_1 & $NIFTI_2..."
+
+  # Set the output file basename if not already defined by config
+  if [[ -z $output_file_base ]]; then
+    output_file_base=$OUTPUT_DIR/`basename "$NIFTI_1" .nii.gz`_`basename "$NIFTI_2" .nii.gz`
+    output_file_base=$(echo -e "${output_file_base}" | tr -d '[:space:]')
+  fi
+
+  # Merge the images
+  echo -e "fslmerge ${OPTIONS} "$output_file_base".nii.gz "$NIFTI_1" "$NIFTI_2" $TR"
+  fslmerge ${OPTIONS} "$output_file_base".nii.gz "$NIFTI_1" "$NIFTI_2" $TR
+  exit_status=$?
+  if [[ $exit_status != 0 ]]; then
+    echo "$CONTAINER  fslmerge exited with failures ($exit_status)"
+    exit 1
+  fi
+else
+  echo "$CONTAINER  $INPUT_DIR contains a single NIfTI file!"
+fi
+
+if [[ -n "$BVAL_1" ]] && [[ -n "$BVAL_2" ]]; then
+  echo "$CONTAINER  Running merge_bval on $BVAL_1 & $BVAL_2..."
+  merge_bval "$BVAL_1" "$BVAL_2" "$output_file_base".bval
+  merge_bval_exit=$?
+else
+  merge_bval_exit=0
+fi
+
+if [[ -n "$BVEC_1" ]] && [[ -n "$BVEC_2" ]]; then
+  echo "$CONTAINER  Running merge_bvec on $BVEC_1 & $BVEC_2..."
+  merge_bvec "$BVEC_1" "$BVEC_2" "$output_file_base".bvec
+  merge_bvec_exit=$?
+else
+  merge_bvec_exit=0
+fi
+
+
+###############################################################################
+# Check status and exit accordingly
+
+if [[ $exit_status == 0 ]] && [[ $merge_bval_exit == 0 ]] && [[ $merge_bvec_exit == 0 ]]; then
+  echo -e "$CONTAINER  Done!"
+
+  # Move files to where dtiInit expects them to be.
+  if [[ ${DO_MERGE} == 0 ]]; then
+    mv "$NIFTI_1" "$BVEC_1" "$BVAL_1" "$OUTPUT_DIR"
+  fi
+
+  exit 0
+else
+  echo -e "$CONTAINER  Exiting with failures! (fslmerge=$exit_status, merge_bval=$merge_bval_exit, merge_bvec=$merge_bvec_exit)"
+  exit 1
+fi
