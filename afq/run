@@ -1,0 +1,130 @@
+#! /bin/bash
+#
+# Run afq Gear
+# Built to flywheel-v0 spec.
+#
+
+CONTAINER="[scitran/afq]"
+echo -e "$CONTAINER  Initiated"
+
+# Configure the ENV
+export FSLOUTPUTTYPE=NIFTI_GZ
+export LD_LIBRARY_PATH=/opt/mcr/v82/runtime/glnxa64:/opt/mcr/v82/bin/glnxa64:/opt/mcr/v82/sys/os/glnxa64:/opt/mcr/v82/sys/java/jre/glnxa64/jre/lib/amd64/native_threads:/opt/mcr/v82/sys/java/jre/glnxa64/jre/lib/amd64/server:/opt/mcr/v82/sys/java/jre/glnxa64/jre/lib/amd64:$LD_LIBRARY_PATH
+export XAPPLRESDIR=/opt/mcr/v82/X11/app-defaults
+
+# Add mrtrix and ants to the path
+export PATH=/usr/lib/ants:/usr/lib/mrtrix/bin:$PATH
+
+# Set DISPLAY for xvfb
+export DISPLAY=:1.0
+
+# Define the start Xvfb function
+start_xvfb() {
+  Xvfb :1 -screen 0 1920x1200x24+32 &> /dev/null &
+}
+
+# Configure paths
+FLYWHEEL_BASE=/flywheel/v0
+OUTPUT_DIR=$FLYWHEEL_BASE/output
+INPUT_DIR=$FLYWHEEL_BASE/input
+ZIP_DIR=$INPUT_DIR/dtiInit_Archive # Must match input from the manifest
+WORK_DIR=$INPUT_DIR/work
+CONFIG_FILE=${FLYWHEEL_BASE}/config.json
+PARAMS_FILE=${WORK_DIR}/AFQ_params.json
+LOG_FILE=$OUTPUT_DIR/AFQ_log.txt
+
+# Ensure there is an output directory
+if [[ ! -d "$OUTPUT_DIR" ]]
+then
+  echo "$CONTAINER  $OUTPUT_DIR not found!"
+  exit 1
+fi
+
+# Make the directories
+mkdir $WORK_DIR
+
+# Move files into work directory and do the work
+ZIP_FILE=$(find ${ZIP_DIR} -type f -name "*.zip" | head -1)
+unzip $ZIP_FILE -d $WORK_DIR
+
+# Find the dt6.mat file and use that as the input to AFQ
+DT6_FILE=$(find ${WORK_DIR} -type f -name "dt6.mat" | head -1)
+AFQ_INPUT_DIR=$(dirname $DT6_FILE)
+
+# Convert the config json to a dtiinit_params json file
+$FLYWHEEL_BASE/afq_parse_config.py --input_file ${CONFIG_FILE} --output_file ${PARAMS_FILE} --input_dir ${AFQ_INPUT_DIR} --output_dir ${OUTPUT_DIR}
+
+# Make sure the params file is saved with the output
+cp ${PARAMS_FILE} ${OUTPUT_DIR}
+
+# Start Xvfb and pass the input arguments to AFQ execute the algorithm
+start_xvfb && time /usr/local/bin/AFQ "$PARAMS_FILE" 2>&1 | tee $LOG_FILE
+
+# Xvfb occasionally hangs -- make sure that Xvfb dies
+kill -9 %1
+
+# If sucessful, the main outputs will be here
+AFQ_DIR=$OUTPUT_DIR/AFQ
+
+# Get a list of the files in the output directory
+outputs=$(find $AFQ_DIR/* -maxdepth 0 -type f)
+
+# If outputs exist, generate metadata, and exit
+if [[ -z $outputs ]]
+then
+  echo "$CONTAINER  FAILED: No results found in output directory... Exiting"
+  exit 1
+else
+  # Process figures
+  FIGURES_DIR=$AFQ_DIR/figures
+  PDF_DIR=$AFQ_DIR/pdfs
+  mkdir $PDF_DIR
+
+  # Summary pdf
+  if [[ -n "$FIGURES_DIR/*.png" ]]; then
+    echo -e "[$CONTAINER]  Converting figures"
+    convert "$FIGURES_DIR/*.{png}" $PDF_DIR/AFQ_Summary.pdf
+    # convert "$FIGURES_DIR/*.{gif}" $PDF_DIR/AFQ_Fiber_Rendering.pdf
+
+    # Pdf for each measure
+    convert "$FIGURES_DIR/md/*.{png}" $PDF_DIR/AFQ_Figures_Mean_Diffusivity.pdf
+    convert "$FIGURES_DIR/ad/*.{png}" $PDF_DIR/AFQ_Figures_Axial_Diffusivity.pdf
+    convert "$FIGURES_DIR/rd/*.{png}" $PDF_DIR/AFQ_Figures_Radial_Diffusivity.pdf
+    convert "$FIGURES_DIR/fa/*.{png}" $PDF_DIR/AFQ_Figures_Fractional_Anisotropy.pdf
+  else
+    echo -e "[$CONTAINER]  No figures found"
+  fi
+
+  # Copy pdf, csv, mat, gif, and json files to output
+  cp $PDF_DIR/*.pdf $OUTPUT_DIR
+  cp $AFQ_DIR/csv_files/*.csv $OUTPUT_DIR
+  cp $AFQ_DIR/*.mat $AFQ_DIR/*.json $OUTPUT_DIR
+  if [[ -e $FIGURES_DIR/000_RotatingFibers.gif ]]; then
+    cp $FIGURES_DIR/000_RotatingFibers.gif $OUTPUT_DIR/AFQ_Fiber_Rendering.gif
+  else
+    echo -e "[$CONTAINER]  GIF image not found!"
+  fi
+  # Copy DTIINIT input/ouputs to AFQ
+  cp -a $AFQ_INPUT_DIR $AFQ_DIR
+
+  # Get basename for AFQ ouput zip
+  AFQ_NAME=$(basename `find $AFQ_DIR/ -type f -name "afq*.mat"` .mat)
+
+  # Rename and Compress AFQ_DIR
+  cd $OUTPUT_DIR
+  mv AFQ $AFQ_NAME
+  chmod -R 777 $OUTPUT_DIR
+  zip -r AFQ_Output_$AFQ_NAME.zip $AFQ_NAME && rm -rf $AFQ_NAME
+
+  # Create metadata json file ($OUTPUT_DIR/.metadata.json)
+  $FLYWHEEL_BASE/metadata_create.py $OUTPUT_DIR $CONTAINER
+
+  # Set permissions for outputs (prevent root only r/w)
+  chmod -R 777 $OUTPUT_DIR
+
+  # End
+  echo -e "$CONTAINER  Wrote: `ls`"
+  echo -e "$CONTAINER  Done!"
+fi
+
+exit 0
