@@ -82,7 +82,7 @@ else
 
   # Summary pdf
   if [[ -n "$FIGURES_DIR/*.png" ]]; then
-    echo -e "[$CONTAINER]  Converting figures"
+    echo -e "$CONTAINER  Converting figures"
     convert "$FIGURES_DIR/*.{png}" $PDF_DIR/AFQ_Summary.pdf
     # convert "$FIGURES_DIR/*.{gif}" $PDF_DIR/AFQ_Fiber_Rendering.pdf
 
@@ -92,7 +92,7 @@ else
     convert "$FIGURES_DIR/rd/*.{png}" $PDF_DIR/AFQ_Figures_Radial_Diffusivity.pdf
     convert "$FIGURES_DIR/fa/*.{png}" $PDF_DIR/AFQ_Figures_Fractional_Anisotropy.pdf
   else
-    echo -e "[$CONTAINER]  No figures found"
+    echo -e "$CONTAINER  No figures found!"
   fi
 
   # Copy pdf, csv, mat, gif, and json files to output

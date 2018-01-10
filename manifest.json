@@ -1,9 +1,10 @@
 {
   "name": "afq-pipeline",
-  "label": "AFQ Pipeline: Automated Fiber Quantification",
-  "description": "AFQ was designed [by Jason D. Yeatman, et al.] to generate Tract Profiles of tissue properties for major fiber tracts in healthy and diseased brains. Online documentation can be found at: https://github.com/yeatmanlab/AFQ/wiki.",
+  "label": "AFQ Pipeline: Automated Fiber Quantification Pipeline",
+  "description": "This gear contains a 3-step pipeline designed to run AFQ. The first step is optional, and will merge two diffusion datasets using FSLMERGE. The second step is data preprocessing using DTIINIT, from the VISTA Lab, Stanford University. The final step is the Automated Fiber Quantification (AFQ), which generates tract profiles of tissue properties for major fiber tracts in the brain.",
   "maintainer": "Michael Perry <lmperry@stanford.edu>",
-  "author": "Jason D. Yeatman <jyeatman@uw.edu>",
+  "author": "Jason D. Yeatman, et. al, VISTA Lab, FMRIB Software Laboratory",
+  "cite": "Yeatman J.D., Dougherty R.F., Myall N.J., Wandell B.A., Feldman H.M. (2012). Tract Profiles of White Matter Properties: Automating Fiber-Tract Quantification. PLoS One.; M. Jenkinson, C.F. Beckmann, T.E. Behrens, M.W. Woolrich, S.M. Smith. FSL. NeuroImage, 62:782-90, 2012",
   "url": "https://github.com/yeatmanlab/afq",
   "source": "https://github.com/scitran-apps/afq-pipline",
   "license": "GPL-2.0",
