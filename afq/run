@@ -136,6 +136,7 @@ else
   cd $OUTPUT_DIR
   mv AFQ $AFQ_NAME
   chmod -R 777 $OUTPUT_DIR
+  echo -e "[$CONTAINER]  compressing outputs..."
   zip -r AFQ_Output_$AFQ_NAME.zip $AFQ_NAME && rm -rf $AFQ_NAME
 
   # Set permissions for outputs (prevent root only r/w)
