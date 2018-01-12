@@ -82,36 +82,41 @@ else
 
   # Summary pdf
   echo -e "$CONTAINER  Converting figures to pdf"
-  if [[ -n $(ls "$FIGURES_DIR/*.png") ]]; then
+  f=$(find "$FIGURES_DIR"/* -maxdepth 0 -name "*.png")
+  if [[ -n ${f} ]]; then
     convert "$FIGURES_DIR/*.{png}" $PDF_DIR/AFQ_Summary.pdf
-    # convert "$FIGURES_DIR/*.{gif}" $PDF_DIR/AFQ_Fiber_Rendering.pdf
   else
     echo -e "$CONTAINER  No SUMMARY figures found!"
   fi
     # Pdf for each measure
-  if [[ -n $(ls "$FIGURES_DIR/md/*.png") ]]; then
+  f=$(find "$FIGURES_DIR"/md/* -maxdepth 0 -name "*.png")
+  if [[ -n ${f} ]]; then
     convert "$FIGURES_DIR/md/*.{png}" $PDF_DIR/AFQ_Figures_Mean_Diffusivity.pdf
   else
     echo -e "$CONTAINER  No MD figures found!"
   fi
-  if [[ -n $(ls "$FIGURES_DIR/ad/*.png") ]]; then
+  f=$(find "$FIGURES_DIR"/ad/* -maxdepth 0 -name "*.png")
+  if [[ -n ${f} ]]; then
     convert "$FIGURES_DIR/ad/*.{png}" $PDF_DIR/AFQ_Figures_Axial_Diffusivity.pdf
   else
     echo -e "$CONTAINER  No AD figures found!"
   fi
-  if [[ -n $(ls "$FIGURES_DIR/rd/*.png") ]]; then
+  f=$(find "$FIGURES_DIR"/rd/* -maxdepth 0 -name "*.png")
+  if [[ -n ${f} ]]; then
     convert "$FIGURES_DIR/rd/*.{png}" $PDF_DIR/AFQ_Figures_Radial_Diffusivity.pdf
   else
     echo -e "$CONTAINER  No RD figures found!"
   fi
-  if [[ -n $(ls "$FIGURES_DIR/fa/*.png") ]]; then
+  f=$(find "$FIGURES_DIR"/fa/* -maxdepth 0 -name "*.png")
+  if [[ -n ${f} ]]; then
     convert "$FIGURES_DIR/fa/*.{png}" $PDF_DIR/AFQ_Figures_Fractional_Anisotropy.pdf
   else
     echo -e "$CONTAINER  No FA figures found!"
   fi
 
   # Copy pdf, csv, mat, gif, and json files to output
-  if [[ -n $(ls "$PDF_DIR/*.pdf") ]]; then
+  f=$(find "$PDF_DIR"/* -maxdepth 0 -name "*.png")
+  if [[ -n ${f} ]]; then
     cp $PDF_DIR/*.pdf $OUTPUT_DIR
   fi
   cp $AFQ_DIR/csv_files/*.csv $OUTPUT_DIR
@@ -132,9 +137,6 @@ else
   mv AFQ $AFQ_NAME
   chmod -R 777 $OUTPUT_DIR
   zip -r AFQ_Output_$AFQ_NAME.zip $AFQ_NAME && rm -rf $AFQ_NAME
-
-  # Create metadata json file ($OUTPUT_DIR/.metadata.json)
-  $FLYWHEEL_BASE/metadata_create.py $OUTPUT_DIR $CONTAINER
 
   # Set permissions for outputs (prevent root only r/w)
   chmod -R 777 $OUTPUT_DIR
