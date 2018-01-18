@@ -35,7 +35,9 @@ print('Done')
 ################################################################################
 # Get the analysis/session ID
 
-analysis = fw.get_analysis(analysis_id)
+analysis = fw.get_analysis(config_content['destination']['id'])
+
+FLYWHEEL_BASE = os.environ['FLYWHEEL']
 
 if analysis['parent']['type'] != 'session':
     raise ValueError('Parent must be session container.')
