@@ -50,12 +50,14 @@ RUN apt-get update && apt-get install -y --force-yes \
     zip \
     unzip \
     python \
+    python-pip \
     imagemagick \
     wget \
     subversion \
     fsl-5.0-core \
     jq \
     mrtrix \
+    git \
     ants
 
 
@@ -119,6 +121,34 @@ COPY fslmerge/source/run ${FLYWHEEL}/run_fslmerge
 
 
 ############################
+# FLYWHEEL
+
+COPY fw_sdk_functions.py ${FLYWHEEL}/
+COPY fw_sdk_getData.py ${FLYWHEEL}/
+
+# Install the SDK
+WORKDIR ${FLYWHEEL}
+ENV LD_LIBRARY_PATH_TMP ${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH ' '
+RUN git clone https://github.com/flywheel-io/sdk workspace/src/flywheel.io/sdk
+RUN ln -s workspace/src/flywheel.io/sdk sdk
+RUN ${FLYWHEEL}/sdk/make.sh
+RUN ${FLYWHEEL}/sdk/bridge/make.sh
+ENV PYTHONPATH /flywheel/v0/sdk/bridge/dist/python/flywheel
+ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH_TMP}
+
+
+############################
+# FUZZY
+
+RUN pip install --upgrade pip && pip install fuzzywuzzy && pip install fuzzywuzzy[speedup]
+
+
+############################
+# ENV preservation for Flywheel Engine
+
+RUN env -u HOSTNAME -u PWD | \
+  awk -F = '{ print "export " $1 "=\"" $2 "\"" }' > ${FLYWHEEL}/docker-env.sh
 
 # Configure entrypoint
 RUN chmod +x ${FLYWHEEL}/*
