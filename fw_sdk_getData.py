@@ -12,18 +12,29 @@ from fw_sdk_functions import get_diffusion_acquisitions, get_anatomical_acquisit
 ################################################################################
 # Read in config file
 
+FLYWHEEL_BASE = os.environ['FLYWHEEL']
 CONFIG_FILE = os.path.join(FLYWHEEL_BASE, 'config.json')
 
 if not os.path.exists(CONFIG_FILE):
     raise Exception('Config file (%s) does not exist' % CONFIG_FILE)
 
 with open(CONFIG_FILE, 'r') as cf:
-    config_content = json.loads(cf)
+    config_content = json.load(cf)
+
+################################################################################
+# API KEY
 
 # Get apikey and session ID number from config file
 api_key = str(config_content['inputs']['api_key']['key'])
 
-# Get the analysis
+print("Creating SDK client...")
+fw = flywheel.Flywheel(api_key)
+print('Done')
+
+
+################################################################################
+# Get the analysis/session ID
+
 analysis = fw.get_analysis(analysis_id)
 
 if analysis['parent']['type'] != 'session':
@@ -34,17 +45,8 @@ session_id = analysis['parent']['id']
 
 
 ################################################################################
-# API KEY
-
-print("Creating SDK client...")
-fw = flywheel.Flywheel(api_key)
-print('Done')
-
-
-################################################################################
 # CREATE DIRECTORIES
 
-FLYWHEEL_BASE = os.environ['FLYWHEEL']
 INPUT_DIR = os.path.join(FLYWHEEL_BASE, 'input')
 
 ANAT_DIR = os.path.join(INPUT_DIR, 'anatomical')

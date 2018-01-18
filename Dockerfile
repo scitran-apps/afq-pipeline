@@ -127,14 +127,14 @@ COPY fw_sdk_functions.py ${FLYWHEEL}/
 COPY fw_sdk_getData.py ${FLYWHEEL}/
 
 # Install the SDK
-WORKDIR ${FLYWHEEL}
+WORKDIR /opt/flywheel
 ENV LD_LIBRARY_PATH_TMP ${LD_LIBRARY_PATH}
 ENV LD_LIBRARY_PATH ' '
 RUN git clone https://github.com/flywheel-io/sdk workspace/src/flywheel.io/sdk
 RUN ln -s workspace/src/flywheel.io/sdk sdk
-RUN ${FLYWHEEL}/sdk/make.sh
-RUN ${FLYWHEEL}/sdk/bridge/make.sh
-ENV PYTHONPATH /flywheel/v0/sdk/bridge/dist/python/flywheel
+RUN sdk/make.sh
+RUN sdk/bridge/make.sh
+ENV PYTHONPATH /opt/flywheel/workspace/src/flywheel.io/sdk/bridge/dist/python/flywheel
 ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH_TMP}
 
 

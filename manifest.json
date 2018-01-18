@@ -7,7 +7,7 @@
   "cite": "Yeatman J.D., Dougherty R.F., Myall N.J., Wandell B.A., Feldman H.M. (2012). Tract Profiles of White Matter Properties: Automating Fiber-Tract Quantification. PLoS One.; M. Jenkinson, C.F. Beckmann, T.E. Behrens, M.W. Woolrich, S.M. Smith. FSL. NeuroImage, 62:782-90, 2012",
   "url": "https://github.com/yeatmanlab/afq",
   "source": "https://github.com/scitran-apps/afq-pipline",
-  "license": "GPL-2.0",
+  "license": "Other",
   "flywheel": "0",
   "version": "1.0.0",
   "custom": {
@@ -16,7 +16,7 @@
   "inputs": {
     "api_key": {
       "description": "This gear uses the calling user's api_key, provided by the application, to issue SDK commands to find and download the required inputs to this gear.",
-      "base": "api_key"
+      "base": "api-key"
     }
   },
   "config": {
