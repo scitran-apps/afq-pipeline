@@ -1,5 +1,7 @@
 import os
 import sys
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 from pprint import pprint as pp
 
 #### Define functions
@@ -21,10 +23,12 @@ def get_diffusion_acquisitions(acquisitions, diffusion_acquisition_label):
 
         #  Determine acquisitions to use based on label fuzzy matching
         if len(diffusion_acquisitions) == 0:
+            print('No Diffusion acquisitions found! Either classification was not set or required \
+                    files (bvec, nifti, bval) do not exist in any aquisitions.')
             return diffusion_acquisitions
 
         if len(diffusion_acquisitions) > 2:
-            print('Found %s diffusion acquisitions - trying to determine if we have a usable set based on label.'
+            print('  Found %s diffusion acquisitions - trying to determine if we have a usable set based on label.'
                   % (len(diffusion_acquisitions)))
             labels = [x['label'] for x in diffusion_acquisitions]
 
@@ -33,17 +37,17 @@ def get_diffusion_acquisitions(acquisitions, diffusion_acquisition_label):
                 this_label = d_labels.pop(d_labels.index(l))
                 for dl in d_labels:
                     ratio = fuzz.ratio(this_label, dl)
-                    print(str(ratio))
+                    print('   Analyzing %s & %s... ratio = %s' % (this_label, dl, str(ratio)))
                     if ratio > 90:
                         label_1, label_2 = this_label, dl
-            print('Matched %s and %s!' % (label_1, label_2))
+            print('  Matched %s and %s!' % (label_1, label_2))
 
             if label_1 and label_2:
-                diffusion_acquisition = [ x for x in acquisitions if x['label'] == label_1 or x['label'] == label_2 ]
+                diffusion_acquisitions = [ x for x in acquisitions if x['label'] == label_1 or x['label'] == label_2 ]
 
     else:
         diffusion_acquisitions = [x for x in acquisitions if x['label'].find(diffusion_acquisition_label) != -1]
-
+    print('Returning %s diffusion acquisitions' % (str(len(diffusion_acquisitions))))
     return diffusion_acquisitions
 
 
