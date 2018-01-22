@@ -1,88 +1,40 @@
 {
-  "name": "afq-pipeline",
-  "label": "AFQ Pipeline: Automated Fiber Quantification Pipeline",
-  "description": "This gear contains a 3-step pipeline designed to run AFQ. The first step is optional, and will merge two diffusion datasets using FSLMERGE. The second step is data preprocessing using DTIINIT, from the VISTA Lab, Stanford University. The final step is the Automated Fiber Quantification (AFQ), which generates tract profiles of tissue properties for major fiber tracts in the brain.",
+  "name": "afq-pipeline-sdk",
+  "label": "AFQ SDK Pipeline: Automated Fiber Quantification Processing Pipeline",
+  "description": "This SDK Gear will take a user-provided acquisition label and automatically find appropriate inputs for the Gear. The Gear runs a 3-step pipeline designed to run AFQ. The first step is optional, and will merge two diffusion datasets using FSLMERGE. The second step is data preprocessing using DTIINIT. The final step the Automated Fiber Quantification (AFQ), which generates tract profiles of tissue properties for major fiber tracts in the brain.",
   "maintainer": "Michael Perry <lmperry@stanford.edu>",
   "author": "Jason D. Yeatman, et. al, VISTA Lab, FMRIB Software Laboratory",
   "cite": "Yeatman J.D., Dougherty R.F., Myall N.J., Wandell B.A., Feldman H.M. (2012). Tract Profiles of White Matter Properties: Automating Fiber-Tract Quantification. PLoS One.; M. Jenkinson, C.F. Beckmann, T.E. Behrens, M.W. Woolrich, S.M. Smith. FSL. NeuroImage, 62:782-90, 2012",
   "url": "https://github.com/yeatmanlab/afq",
   "source": "https://github.com/scitran-apps/afq-pipline",
-  "license": "GPL-2.0",
+  "license": "Other",
   "flywheel": "0",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "custom": {
-    "docker-image": "scitran/afq-pipeline:v1.0.1"
+    "docker-image": "scitran/afq-pipeline-sdk:v1.0.0"
   },
   "inputs": {
-    "anatomical": {
-      "description": "OPTIONAL: Anatomical (e.g., t1-weighted) NIfTI file. During the initial phase of processing the diffusion data (b=0 images) will be aligned to this image. By default the DWI data will be aligned to the MNI_EPI template.",
-      "base": "file",
-      "optional": true,
-      "type": {
-        "enum": [
-          "nifti"
-        ]
-      }
-    },
-    "NIFTI_1": {
-      "description": "NIfTI image to be merged.",
-      "base": "file",
-      "type": {
-        "enum": [
-          "nifti"
-        ]
-      }
-    },
-    "NIFTI_2": {
-      "description": "NIfTI image to be merged.",
-      "base": "file",
-      "optional": true,
-      "type": {
-        "enum": [
-          "nifti"
-        ]
-      }
-    },
-    "BVAL_1": {
-      "description": "BVAL file to be merged.",
-      "base": "file",
-      "type": {
-        "enum": [
-          "bval"
-        ]
-      }
-    },
-    "BVAL_2": {
-      "description": "BVAL file to be merged.",
-      "base": "file",
-      "optional": true,
-      "type": {
-        "enum": [
-          "bval"
-        ]
-      }
-    },
-    "BVEC_1": {
-      "description": "BVEC file to be merged.",
-      "base": "file",
-      "type": {
-        "enum": [
-          "bvec"
-        ]
-      }
-    },
-    "BVEC_2": {
-      "description": "BVEC file to be merged.",
-      "base": "file",
-      "optional": true,
-      "type": {
-        "enum": [
-          "bvec"
-        ]
-      }
+    "api_key": {
+      "description": "This gear uses the calling user's api_key, provided by the application, to issue SDK commands to find and download the required inputs to this gear.",
+      "base": "api-key"
     }
   },
   "config": {
+    "diffusion_acquisition_label": {
+      "description": "Acquisition label for diffusion acquisitions that should be used as input to the pipeline. This label will be used to find the diffusion data that will be used as input for the pipeline. Given the nature of the pipeline, there can be no more than two acquisitions that match this label. If two acquisitions are found they will be merged and processed as one. If more than two (or none) are found an error will be raised.",
+      "default": "autodetect",
+      "type": "string"
+    },
+    "anatomical_acquisition_label": {
+      "description": "Acquisition label for anatomical acquisitions that should be used as input to the pipeline. This label will be used to find the anatomical (T1) data that will be used as input for the pipeline. If more than one acquisition (or none) is found an error will be raised.",
+      "default": "autodetect",
+      "type": "string"
+    },
+    "align_to_anatomical": {
+      "description": "During the initial phase of processing the diffusion data (b=0 images) will be aligned to a T1 Image. By default the DWI data will be aligned to the MNI_EPI template.",
+      "default": false,
+      "type": "boolean"
+    },
     "catTime": {
       "description": "FSLMERGE: concatenate images in time [default=false]",
       "default": false,
@@ -108,13 +60,13 @@
       "id": "-z"
     },
     "auto": {
-      "description": "FSLMERGE: auto-choose: single slices -> volume, volumes -> 4D (time series) [default=true]",
+      "description": "FSLMERGE: auto-choose: single slices -> volume, volumes -> 4D (time series) [default=true]",
       "default": true,
       "type": "boolean",
       "id": "-a"
     },
     "catTR": {
-      "description": "FSLMERGE: concatenate images in time and set the output image tr to this value. values other than '0' will trigger this option. [default=0, false]",
+      "description": "FSLMERGE: concatenate images in time and set the output image tr to this value. values other than '0' will trigger this option. [default=0, false]",
       "default": 0,
       "type": "number",
       "id": "-tr"

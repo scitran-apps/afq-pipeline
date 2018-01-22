@@ -12,6 +12,25 @@ FLYWHEEL_BASE=/flywheel/v0
 OUTPUT_DIR=$FLYWHEEL_BASE/output
 INPUT_DIR=$FLYWHEEL_BASE/input
 
+
+################################################################################
+# CONFIGURE ENV
+
+source ${FLYWHEEL_BASE}/docker-env.sh
+
+
+################################################################################
+# Use the SDK to download the data
+
+${FLYWHEEL_BASE}/fw_sdk_getData.py
+exit_status=$?
+
+if [[ $exit_status != 0 ]]; then
+  echo "$CONTAINER  Failure during FW SDK download. Exiting!"
+  exit $exit_status
+fi
+
+
 ###############################################################################
 # Built to flywheel-v0 spec.
 
@@ -22,6 +41,7 @@ if [[ $exit_status != 0 ]]; then
   echo "$CONTAINER  MERGE failure!"
   exit $exit_status
 fi
+
 
 ###############################################################################
 # DTIINIT
