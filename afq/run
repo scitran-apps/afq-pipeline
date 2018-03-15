@@ -75,6 +75,7 @@ then
   echo "$CONTAINER  FAILED: No results found in output directory... Exiting"
   exit 1
 else
+
   # Process figures
   FIGURES_DIR=$AFQ_DIR/figures
   PDF_DIR=$AFQ_DIR/pdfs
@@ -115,17 +116,20 @@ else
   fi
 
   # Copy pdf, csv, mat, gif, and json files to output
-  f=$(find "$PDF_DIR"/* -maxdepth 0 -name "*.png")
+  f=$(find "$PDF_DIR"/* -maxdepth 0 -name "*.pdf")
   if [[ -n ${f} ]]; then
     cp $PDF_DIR/*.pdf $OUTPUT_DIR
   fi
+
   cp $AFQ_DIR/csv_files/*.csv $OUTPUT_DIR
   cp $AFQ_DIR/*.mat $AFQ_DIR/*.json $OUTPUT_DIR
+
   if [[ -e $FIGURES_DIR/000_RotatingFibers.gif ]]; then
     cp $FIGURES_DIR/000_RotatingFibers.gif $OUTPUT_DIR/AFQ_Fiber_Rendering.gif
   else
     echo -e "[$CONTAINER]  GIF image not found!"
   fi
+
   # Copy DTIINIT input/ouputs to AFQ
   cp -a $AFQ_INPUT_DIR $AFQ_DIR
 
