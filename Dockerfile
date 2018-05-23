@@ -1,7 +1,7 @@
 # Create Docker container that can run afq analysis.
 
-# Start with the Matlab r2013b runtime container
-FROM flywheel/matlab-mcr:v82
+# Start with the Matlab r2017b runtime container
+FROM flywheel/matlab-mcr:v93
 MAINTAINER Michael Perry <lmperry@stanford.edu>
 
 ENV FLYWHEEL /flywheel/v0
@@ -44,6 +44,7 @@ RUN sed -i -e 's,main *$,main contrib non-free,g' /etc/apt/sources.list.d/neurod
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --force-yes \
     xvfb \
+    software-properties-common \
     xfonts-100dpi \
     xfonts-75dpi \
     xfonts-cyrillic \
@@ -55,15 +56,54 @@ RUN apt-get update && apt-get install -y --force-yes \
     subversion \
     fsl-5.0-core \
     jq \
-    mrtrix \
-    ants
-
+    ants \
+    xfonts-100dpi \
+    xfonts-75dpi \
+    xfonts-cyrillic \
+    git  \
+    gcc  \
+    g++  \
+    python-numpy  \
+    libeigen3-dev  \
+    zlib1g-dev \
+    libqt4-opengl-dev \
+    libgl1-mesa-dev \
+    libfftw3-dev \
+    libtiff5-dev \
+    build-essential \
+    cmake \
+    pkg-config \
+    libgdcm-tools=2.2.4-1.1ubuntu4 \
+    bsdtar \
+    pigz \
+    gzip 
 
 ############################
 # AFQ
 
-# Add mrtrix and ants to the system path
-ENV PATH /usr/lib/ants:/usr/lib/mrtrix/bin:$PATH
+# Add  ants to the system path
+ENV PATH /usr/lib/ants:$PATH
+
+
+
+# Install mrtrix 3: dependencies installed above
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test
+RUN apt-get update
+RUN apt-get install -y --force-yes  g++-4.9
+ENV mrtrix3COMMIT=8cef83213c4dcce7be1296849bda2b097004dd0c
+# ENV LD_LIBRARY_PATH /opt/mcr/v93/bin/glnxa64:$LD_LIBRARY_PATH
+RUN curl -#L  https://github.com/MRtrix3/mrtrix3/archive/$mrtrix3COMMIT.zip | bsdtar -xf- -C /usr/lib
+# RUN wget  https://github.com/MRtrix3/mrtrix3/archive/$mrtrix3COMMIT.zip | bsdtar -xf- -C /usr/lib
+WORKDIR /usr/lib/mrtrix3-${mrtrix3COMMIT}/
+RUN chmod -R +rwx /usr/lib/mrtrix3-${mrtrix3COMMIT}
+RUN  ./configure -nogui && ./build &&  ./set_path 
+
+
+
+
+ENV PATH /usr/lib/mrtrix3/bin:$PATH
+
+
 
 # ADD the source Code and Binary to the container
 COPY afq/source/bin/AFQ_StandAlone_QMR /usr/local/bin/AFQ
@@ -124,3 +164,4 @@ COPY fslmerge/source/run ${FLYWHEEL}/run_fslmerge
 RUN chmod +x ${FLYWHEEL}/*
 ENTRYPOINT ["/flywheel/v0/run"]
 COPY manifest.json ${FLYWHEEL}/manifest.json
+
