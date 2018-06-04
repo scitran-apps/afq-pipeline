@@ -9,11 +9,11 @@ echo -e "$CONTAINER  Initiated"
 
 # Configure the ENV
 export FSLOUTPUTTYPE=NIFTI_GZ
-export LD_LIBRARY_PATH=/opt/mcr/v82/runtime/glnxa64:/opt/mcr/v82/bin/glnxa64:/opt/mcr/v82/sys/os/glnxa64:/opt/mcr/v82/sys/java/jre/glnxa64/jre/lib/amd64/native_threads:/opt/mcr/v82/sys/java/jre/glnxa64/jre/lib/amd64/server:/opt/mcr/v82/sys/java/jre/glnxa64/jre/lib/amd64:$LD_LIBRARY_PATH
-export XAPPLRESDIR=/opt/mcr/v82/X11/app-defaults
+export LD_LIBRARY_PATH=/opt/mcr/v93/runtime/glnxa64:/opt/mcr/v93/bin/glnxa64:/opt/mcr/v93/sys/os/glnxa64:$LD_LIBRARY_PATH
+export XAPPLRESDIR=/opt/mcr/v93/X11/app-defaults
 
 # Add mrtrix and ants to the path
-export PATH=/usr/lib/ants:/usr/lib/mrtrix/bin:$PATH
+export PATH=/usr/lib/ants:/usr/lib/mrtrix3/bin:$PATH
 
 # Set DISPLAY for xvfb
 export DISPLAY=:1.0
@@ -31,7 +31,6 @@ ZIP_DIR=$INPUT_DIR/dtiInit_Archive # Must match input from the manifest
 WORK_DIR=$INPUT_DIR/work
 CONFIG_FILE=${FLYWHEEL_BASE}/config.json
 PARAMS_FILE=${WORK_DIR}/AFQ_params.json
-LOG_FILE=$OUTPUT_DIR/AFQ_log.txt
 
 # Ensure there is an output directory
 if [[ ! -d "$OUTPUT_DIR" ]]
@@ -58,7 +57,7 @@ $FLYWHEEL_BASE/afq_parse_config.py --input_file ${CONFIG_FILE} --output_file ${P
 cp ${PARAMS_FILE} ${OUTPUT_DIR}
 
 # Start Xvfb and pass the input arguments to AFQ execute the algorithm
-start_xvfb && time /usr/local/bin/AFQ "$PARAMS_FILE" 2>&1 | tee $LOG_FILE
+start_xvfb && time /usr/local/bin/AFQ "$PARAMS_FILE"
 
 # Xvfb occasionally hangs -- make sure that Xvfb dies
 kill -9 %1
