@@ -18,6 +18,9 @@ function AFQ_StandAlone_QMR(jsonargs)
 %
 % EXAMPLE USAGE:
 %       jsonargs = '{"input_dir": "/home/lmperry/AFQ_docker/mrDiffusion_sampleData/dti40", "out_name": "afq.mat", "output_dir": "/black/lmperry/AFQ_docker/mrDiffusion_sampleData/dti40/AFQ3" }'
+%       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/input/dtiInit222/dti90trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/withDtiinit222_mrtrix","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
+%       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/input/dtiInit111/dti90trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/withDtiinit111_mrtrix","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
+%       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/input/dtiInit222/dti90trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/withDtiinit222_mrtrix","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
 %       AFQ_StandAlone_QMR(jsonargs);
 %
 %
@@ -33,12 +36,17 @@ input_dir  = [];
 out_name   = [];
 output_dir = [];
 params     = [];
-metadata   = [];
+% metadata   = [];
 
 %% Handle jsonargs
+disp("This is the json string to be read by loadjson:")
+disp(jsonargs)
+
+
 
 if exist('jsonargs', 'var') && ~isempty(jsonargs);
-
+    
+   
     args = loadjson(jsonargs);
 
     if isfield(args, 'input_dir')
@@ -57,16 +65,16 @@ if exist('jsonargs', 'var') && ~isempty(jsonargs);
         params = args.params;
     end
 
-    if isfield(args, 'metadata')
-        metadata = args.metadata;
-    end
+%     if isfield(args, 'metadata')
+%         metadata = args.metadata;
+%     end
 
 end
 
 % Run control comparison by default
-if ~isfield(params, 'runcontrolcomp');
-    params.runcontrolcomp = true;
-end
+% if ~isfield(params, 'runcontrolcomp');
+%     params.runcontrolcomp = true;
+% end
 
 
 %% Configure inputs and defaults
@@ -94,66 +102,68 @@ if ~exist(output_dir, 'dir'); mkdir(output_dir); end
 sub_group = ones(numel(sub_dirs),1);
 
 % Set defaults for metadata
-if notDefined('metadata') % TODO: These should be checked individually
-    metadata.age = '';
-    metadata.sex = '';
-    metadata.ndirs = 30;
-    metadata.bvalue = 1000;
-    metadata.age_comp = false;
-end
+% if notDefined('metadata') % TODO: These should be checked individually
+%     metadata.age = '';
+%     metadata.sex = '';
+%     metadata.ndirs = 30;
+%     metadata.bvalue = 1000;
+%     metadata.age_comp = false;
+% end
 
 % Set the age range for group comparisson
-if isnumeric(metadata.age) && metadata.age > 1
-    if metadata.age <= 11
-        metadata.age_range = [ 5 11 ];
-    elseif metadata.age >= 12 && metadata.age <= 18
-        metadata.age_range = [ 12 18 ];
-    elseif metadata.age >= 19 && metadata.age <= 50
-        metadata.age_range = [ 19 50 ];
-    elseif metadata.age >= 51 && metadata.age <= 65
-        metadata.age_range = [ 51 65 ];
-    elseif metadata.age > 65
-        metadata.age_range = [ 65 100 ];
-    end
-else
-    metadata.age_comp = false;
-end
+% if isnumeric(metadata.age) && metadata.age > 1
+%     if metadata.age <= 11
+%         metadata.age_range = [ 5 11 ];
+%     elseif metadata.age >= 12 && metadata.age <= 18
+%         metadata.age_range = [ 12 18 ];
+%     elseif metadata.age >= 19 && metadata.age <= 50
+%         metadata.age_range = [ 19 50 ];
+%     elseif metadata.age >= 51 && metadata.age <= 65
+%         metadata.age_range = [ 51 65 ];
+%     elseif metadata.age > 65
+%         metadata.age_range = [ 65 100 ];
+%     end
+% else
+%     metadata.age_comp = false;
+% end
 
 
 %% Load the control data
 
-control_data = load('/opt/qmr_control_data.mat');
-
-
-%% Create afq structure
-
-if notDefined('outname')
-    out_name = ['afq_', getDateAndTime];
-end
-
-afq = AFQ_Create('sub_dirs', sub_dirs, 'sub_group', sub_group, 'clip2rois', 0,...
-                 'outdir', output_dir, 'outname', out_name);
-
-% Run control comparison by default
-if ~isfield(params, 'runcontrolcomp');
-    afq.params.runcontrolcomp = true;
-end
-
+% control_data = load('/opt/qmr_control_data.mat');
 
 %% Parse the params and setup the AFQ structure
-
 if ~isempty(params)
     if ischar(params)
         P = loadjson(params);
     else
         P = params;
     end
-    fNames = fieldnames(P);
-    for f = 1:numel(fNames)
-       afq.params.(fNames{f}) =  P.(fNames{f});
-    end
-    disp(afq.params);
+%    fNames = fieldnames(P);
+%    for f = 1:numel(fNames)
+%       afq.params.(fNames{f}) =  P.(fNames{f});
+%    end
+%    disp(afq.params);
 end
+
+
+%% Create afq structure
+
+if notDefined('out_name')
+    out_name = ['afq_', getDateAndTime];
+end
+
+afq = AFQ_Create('sub_dirs', sub_dirs, 'sub_group', sub_group, ...
+                 'outdir', output_dir, 'outname', out_name, ...
+                 'params', P);  
+disp(afq.params);
+% Run control comparison by default
+% if ~isfield(params, 'runcontrolcomp');a
+%     afq.params.runcontrolcomp = false;
+% end
+
+
+
 
 
 %% RUN AFQ
@@ -206,6 +216,7 @@ end
 
 
 %% Create Plots and save out the images
+%{
 if afq.params.runcontrolcomp
 
     disp('Running comparison to control population!')
@@ -265,7 +276,7 @@ if afq.params.runcontrolcomp
         disp(ME.message);
     end
 end
-
+%}
 
 %% Reproducibility
 
@@ -276,7 +287,7 @@ R.software.version = version;
 R.software.libs = ver;
 R.code = {};
 
-R.analysis.metadata = metadata;
+% R.analysis.metadata = metadata;
 R.analysis.params   = afq.params;
 R.analysis.subject  = sub_dirs;
 
@@ -294,3 +305,8 @@ else
 end
 
 return
+
+% This is the command used to compile it:
+% mcc -m  -I /black/localhome/glerma/soft/spm8 -I /data/localhome/glerma/soft/vistasoft -I /data/localhome/glerma/soft/jsonlab /data/localhome/glerma/soft/afq-pipeline/afq/source/bin/AFQ_StandAlone_QMR.m  
+% This is the command used to launch it with the MCR
+% ./run_AFQ_StandAlone_QMR.sh /data/localhome/glerma/soft/matlab/mcr92/v92   '{\"input_dir\" : \"/data/localhome/glerma/TESTDATA/AFQ/input/dtiInit111_mcr/dti90trilin\", \"output_dir\": \"/data/localhome/glerma/TESTDATA/AFQ/output/withDtiinit111_mrtrix_mcr\",\"params\"    :\"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json\"}'
