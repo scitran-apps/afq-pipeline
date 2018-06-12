@@ -2,7 +2,7 @@
 #
 #
 
-CONTAINER="[scitran/afq_pipeline]"
+CONTAINER="[scitran/afq-pipeline]"
 echo -e "$CONTAINER  Initiated"
 
 
