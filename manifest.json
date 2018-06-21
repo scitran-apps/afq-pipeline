@@ -1,5 +1,5 @@
 {
-  "name": "afq-pipeline",
+  "name": "afq-pipeline-3",
   "label": "AFQ Pipeline: Automated Fiber Quantification Pipeline",
   "description": "This gear contains a 3-step pipeline designed to run AFQ. The first step is optional, and will merge two diffusion datasets using FSLMERGE. The second step is data preprocessing using DTIINIT, from the VISTA Lab, Stanford University. The final step is the Automated Fiber Quantification (AFQ), which generates tract profiles of tissue properties for major fiber tracts in the brain.",
   "maintainer": "Michael Perry <lmperry@stanford.edu>",
@@ -9,9 +9,9 @@
   "source": "https://github.com/scitran-apps/afq-pipline",
   "license": "GPL-2.0",
   "flywheel": "0",
-  "version": "2.0.0",
+  "version": "3.0.0_rc1",
   "custom": {
-    "docker-image": "scitran/afq-pipeline:2.0.0"
+    "docker-image": "scitran/afq-pipeline:3.0.0"
   },
   "inputs": {
     "anatomical": {
@@ -333,36 +333,6 @@
     "track_nfibers": {
       "description": "AFQ: Number of fibers to track. This parameter is only relevant for mrTrix.",
       "default": 500000,
-      "type": "integer"
-    },
-    "qmr_meatadata_age": {
-      "description": "AFQ: Age of subject in years.",
-      "default": 0,
-      "type": "integer"
-    },
-    "qmr_metadata_sex": {
-      "description": "AFQ: Sex of subject. ('male', 'female', 'unknown')",
-      "default": "unknown",
-      "type": "string"
-    },
-    "qmr_metadata_age_comp": {
-      "description": "AFQ: Restrict comparison to 'age matched' based on the age of the subject.",
-      "default": 0,
-      "type": "integer"
-    },
-    "qmr_metadata_ndirs": {
-      "description": "AFQ: Number of directions for control data (30, 96).",
-      "default": 30,
-      "type": "integer"
-    },
-    "qmr_metadata_bvalue": {
-      "description": "AFQ: B-Value for control data (1000, 2000).",
-      "default": 1000,
-      "type": "integer"
-    },
-    "qmr_runcontrolcomp": {
-      "description": "AFQ: Compare subject to control dataset. For a description of the control dataset, see 'Lifespan maturation and degeneration of human brain white matter' J.D. Yeatman, B.A. Wandell and A. Mezer (2014)  NATURE COMMUNICATIONS | 5:4932 | DOI: 10.1038/ncomms5932.",
-      "default": 1,
       "type": "integer"
     }
   }

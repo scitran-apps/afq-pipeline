@@ -72,23 +72,6 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     del config['params']['cutoffUpper']
     del config['params']['cutoffLower']
 
-    # Handle QMR fields
-    config['metadata'] = {}
-    config['metadata']['age']           = config['params']['qmr_meatadata_age']
-    config['metadata']['sex']           = config['params']['qmr_metadata_sex']
-    config['metadata']['age_comp']      = config['params']['qmr_metadata_age_comp']
-    config['metadata']['ndirs']         = config['params']['qmr_metadata_ndirs']
-    config['metadata']['bvalue']        = config['params']['qmr_metadata_bvalue']
-    config['params']['runcontrolcomp']  = config['params']['qmr_runcontrolcomp']
-
-    # Remove qmr fields
-    del config['params']['qmr_meatadata_age']
-    del config['params']['qmr_metadata_sex']
-    del config['params']['qmr_metadata_age_comp']
-    del config['params']['qmr_metadata_ndirs']
-    del config['params']['qmr_metadata_bvalue']
-    del config['params']['qmr_runcontrolcomp']
-
     # Add input directory for dtiInit
     config['input_dir'] = input_dir
     config['output_dir'] = output_dir
