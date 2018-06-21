@@ -62,6 +62,8 @@ RUN apt-get update && apt-get install -y --force-yes \
 
 ############################
 # MRTRIX 3
+
+# Here we download and build MRTRIX3 from source.
 RUN apt-get install -y \
     git \
     g++ \
@@ -143,12 +145,6 @@ COPY dtiinit/source/bin/parse_config.py ${FLYWHEEL}/dtiinit_parse_config.py
 # FSLMERGE
 
 COPY fslmerge/source/run ${FLYWHEEL}/run_fslmerge
-
-
-
-
-
-
 
 
 ############################
