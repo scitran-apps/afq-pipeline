@@ -100,8 +100,6 @@ COPY afq/run ${FLYWHEEL}/run_afq
 COPY afq/source/parse_config.py ${FLYWHEEL}/afq_parse_config.py
 RUN chmod +x /usr/local/bin/AFQ ${FLYWHEEL}/afq_parse_config.py
 
-# ADD the control data to the container
-COPY afq/source/data/qmr_control_data.mat /opt/qmr_control_data.mat
 
 # ADD AFQ and mrD templates via svn hackery
 ENV TEMPLATES /templates
