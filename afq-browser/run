@@ -27,7 +27,7 @@ else:
     print("Creating config from file: ", CONFIG_FILE)
 
 print("CONFIG: ", config)
-title = config['AFQ-Browser_Title']
+title = config['AFQ_Browser_Title']
 
 ## Validate input data
 print("INPUT_DIR: ", INPUT_DIR)

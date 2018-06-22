@@ -335,8 +335,8 @@
       "default": 500000,
       "type": "integer"
     },
-    "AFQ-Browser_Title": {
-      "default": "AFQ-Browser",
+    "AFQ_Browser_Title": {
+      "default": "AFQ_Browser",
       "type": "string",
       "description": "A title for the AFQ-browser web-page"
     }
