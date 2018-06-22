@@ -48,6 +48,10 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     config['params']['track']['wPuncture']          = config['params']['track_wPuncture']
     config['params']['track']['whichAlgorithm']     = config['params']['track_whichAlgorithm']
     config['params']['track']['whichInterp']        = config['params']['track_whichInterp']
+    # # TODO: Add and pull this from the manifest
+    config['params']['track']['mrTrixAlgo']         = "iFOD2"
+    config['params']['track']['multishell']         = False
+    config['params']['track']['tool']               = 'freesurfer'
 
     # Remove the other track_ fields
     del config['params']['track_algorithm']
@@ -75,6 +79,9 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     # Add input directory for dtiInit
     config['input_dir'] = input_dir
     config['output_dir'] = output_dir
+
+    # Add extra keys
+    config['params']['run_mode'] = [],
 
     # Write out the modified configuration
     with open(output_file, 'w') as config_json:
