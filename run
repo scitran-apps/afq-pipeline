@@ -60,4 +60,16 @@ if [[ $exit_status != 0 ]]; then
   exit $exit_status
 fi
 
+
+###############################################################################
+# AFQ-BROWSER
+
+${FLYWHEEL_BASE}/run_afq-browser.py
+exit_status=$?
+
+if [[ $exit_status != 0 ]]; then
+  echo "$CONTAINER  AFQ-BROWSER failure!"
+  exit $exit_status
+fi
+
 exit 0

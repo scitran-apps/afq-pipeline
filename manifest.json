@@ -334,6 +334,11 @@
       "description": "AFQ: Number of fibers to track. This parameter is only relevant for mrTrix.",
       "default": 500000,
       "type": "integer"
+    },
+    "AFQ-Browser_Title": {
+      "default": "AFQ-Browser",
+      "type": "string",
+      "description": "A title for the AFQ-browser web-page"
     }
   }
 }
