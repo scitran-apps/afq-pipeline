@@ -147,6 +147,35 @@ COPY fslmerge/source/run ${FLYWHEEL}/run_fslmerge
 
 
 ############################
+# AFQ Browser
+
+RUN apt-get update -qq \
+    && apt-get install -y \
+    git \
+    python-dev \
+    libblas-dev \
+    liblapack-dev \
+    libatlas-base-dev \
+    gfortran \
+    python-numpy \
+    python-pandas \
+    python-scipy \
+    python-pip
+
+# We need to start by upgrading setuptools, or run into https://github.com/yeatmanlab/AFQ-Browser/issues/101
+RUN pip install --upgrade setuptools
+
+# Bust the cache to force the next steps:
+ENV BUSTCACHE 11
+
+# Install AFQ-Browser from my branch:
+RUN pip install git+https://github.com/arokem/AFQ-Browser.git@zip
+
+# Copy AFQ Browser run
+COPY afq-browser/run ${FLYWHEEL}/run_afq-browser.py
+
+
+############################
 
 # Configure entrypoint
 RUN chmod +x ${FLYWHEEL}/*
