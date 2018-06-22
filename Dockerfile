@@ -1,7 +1,8 @@
+
 # Create Docker container that can run afq analysis.
 
-# Start with the Matlab r2017b runtime container
-FROM  flywheel/matlab-mcr:v93.1
+# Start with the Matlab r2017a runtime container
+FROM  flywheel/matlab-mcr:v92.1
 MAINTAINER Michael Perry <lmperry@stanford.edu>
 
 ENV FLYWHEEL /flywheel/v0
@@ -115,7 +116,7 @@ ENV DISPLAY :1.0
 # DTIINIT
 
 # ADD the dtiInit Matlab Stand-Alone (MSA) into the container.
-ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrDiffusion/dtiInit/standalone/executables/dtiInit_glnxa64_v82 /usr/local/bin/dtiInit
+COPY dtiinit/source/bin/dtiInit_glnxa64_v92 /usr/local/bin/dtiInit
 
 # Add bet2 (FSL) to the container
 ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrAnatomy/Segment/bet2 /usr/local/bin/
