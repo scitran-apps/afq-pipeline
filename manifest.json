@@ -247,7 +247,7 @@
     },
     "computeCSD": {
       "description": "AFQ: Whether or not to compute constrained spherical deconvolution using mrtrix. 0 means don't use mrtrix. 1 means use mrtrix with the default lmax (4). Otherwise you can set the lmax by with a scaler.",
-      "default": 0,
+      "default": 1,
       "type": "integer"
     },
     "computenorms": {
@@ -266,9 +266,9 @@
       "type": "integer"
     },
     "track_algorithm": {
-      "description": "AFQ: Do fiber tracking with mrdiffusion by default. The other option is 'mrtrix' if it is installed and the data is HARDI.",
+      "description": "AFQ: Do fiber tracking with 'mrdiffusion' or 'mrtrix' if it is installed and the data is HARDI.",
       "type": "string",
-      "default": "mrdiffusion"
+      "default": "mrtrix"
     },
     "track_stepSizeMm": {
       "description": "AFQ: Distance between steps in the tractography algorithm.",
