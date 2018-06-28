@@ -12,7 +12,7 @@ addpath(genpath('/data/localhome/glerma/soft/encode'));
 addpath(genpath('/data/localhome/glerma/soft/JSONio'));
 addpath(genpath('/data/localhome/glerma/soft/app-life'));
 
-mcc -m -R -nodisplay -d compiled main
+mcc -m -R -nodisplay -d compiled AFQ_StandAlone_QMR.m
 exit
 END
 Matlabr2017a -nodisplay -nosplash -r build && rm build.m
