@@ -48,10 +48,15 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     config['params']['track']['wPuncture']          = config['params']['track_wPuncture']
     config['params']['track']['whichAlgorithm']     = config['params']['track_whichAlgorithm']
     config['params']['track']['whichInterp']        = config['params']['track_whichInterp']
+
+
     # # TODO: Add and pull this from the manifest
-    config['params']['track']['mrTrixAlgo']         = "iFOD2"
-    config['params']['track']['multishell']         = False
-    config['params']['track']['tool']               = 'freesurfer'
+    config['params']['track']['mrTrixAlgo']          = "iFOD2"
+    config['params']['track']['multishell']          = False
+    config['params']['track']['tool']                = 'freesurfer'
+    config['params']['track']['life_discretization'] = 360
+    config['params']['track']['life_num_iterations'] = 4
+    config['params']['track']['life_test'            = False
 
     # Remove the other track_ fields
     del config['params']['track_algorithm']
