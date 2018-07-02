@@ -351,7 +351,12 @@
       "type": "string"
     },
     "life_runLife": {
-      "description": "LiFE: Run LiFE algorithm. DEFAULT=True",
+      "description": "LiFE: Run LiFE algorithm. DEFAULT=true",
+      "default": true,
+      "type": "boolean"
+    },
+    "life_saveOutput": {
+      "description": "LiFE: Save outputs from LiFE algorithm. DEFAULT=true",
       "default": true,
       "type": "boolean"
     },
