@@ -57,7 +57,7 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     config['params']['track']['life_discretization'] = config['params']['life_discretization']
     config['params']['track']['life_num_iterations'] = config['params']['life_num_iterations']
     config['params']['track']['life_test']           = config['params']['life_test']
-    config['params']['track']['life_saveOuput']      = config['params']['life_saveOuput']
+    config['params']['track']['life_saveOuput']      = config['params']['life_saveOutput']
 
 
     # Remove the other track_ fields
@@ -82,7 +82,7 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     del config['params']['life_discretization']
     del config['params']['life_num_iterations']
     del config['params']['life_test']
-    del config['params']['life_saveOuput']
+    del config['params']['life_saveOutput']
 
     # Handle cutoffLower and cutoffUpper
     config['params']['cutoff'] = [config['params']['cutoffLower'], config['params']['cutoffUpper'] ]
