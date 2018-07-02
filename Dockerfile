@@ -7,7 +7,6 @@ MAINTAINER Michael Perry <lmperry@stanford.edu>
 
 ENV FLYWHEEL /flywheel/v0
 WORKDIR ${FLYWHEEL}
-COPY run ${FLYWHEEL}/run
 
 # Because we're coming in from a Matlab-MCR we need to unset LD_LIBRARY_PATH
 ENV LD_LIBRARY_PATH ""
@@ -178,6 +177,7 @@ COPY afq-browser/run ${FLYWHEEL}/run_afq-browser.py
 ############################
 
 # Configure entrypoint
+COPY run ${FLYWHEEL}/run
 RUN chmod +x ${FLYWHEEL}/*
 ENTRYPOINT ["/flywheel/v0/run"]
 COPY manifest.json ${FLYWHEEL}/manifest.json
