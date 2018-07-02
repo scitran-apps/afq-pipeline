@@ -26,7 +26,7 @@ else:
     config = json.loads(open(CONFIG_FILE, 'r').read())['config']
     print("Creating config from file: ", CONFIG_FILE)
 
-print("CONFIG: ", config)
+# print("CONFIG: ", config)
 title = config['AFQ_Browser_Title']
 
 ## Validate input data
