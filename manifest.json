@@ -335,10 +335,50 @@
       "default": 500000,
       "type": "integer"
     },
+    "mrtrix_mrTrixAlgo": {
+      "description": "MRTRIX: Tracking algorithm for mrTrix's tckgen. Options are: FACT, iFOD1, iFOD2, NullDits1/NullDist2, SD_STREAM, SpeedTest, Tensor_Det, Tensor_prob. DEFAULT='iFOD2'",
+      "default": "iFOD2",
+      "type": "string"
+    },
+    "mrtrix_multishell": {
+      "description": "MRTRIX: Set to true if this is multi-shell input data. DEFAULT=False",
+      "default": false,
+      "type": "boolean"
+    },
+    "mrtrix_tool": {
+      "description": "MRTRIX: The algorithm to be used to complete the script operation; additional details and options become available once an algorithm is nominated. Options are: freesurfer, fsl DEFAULT='freesurfer'",
+      "default": "freesurfer",
+      "type": "string"
+    },
+    "life_runLife": {
+      "description": "LiFE: Run LiFE algorithm. DEFAULT=True",
+      "default": true,
+      "type": "boolean"
+    },
+    "life_discretization": {
+      "description": "LiFE: Discretization parameter (this parameter defines the resolution of the Phi tensor in describing the orientation of the fascicles in the connectome (number of orientations encoded in Phi, more specifically the size of Phi in mode 1) DEFAULT=360",
+      "default": 360,
+      "type": "number"
+    },
+    "life_num_iterations": {
+      "description": "LiFE: Number of iterations for LiFE algorithm. DEFAULT=4",
+      "default": 4,
+      "type": "number"
+    },
+    "life_test": {
+      "description": "LiFE: Run LiFE in test mode. DEFAULT=False",
+      "default": false,
+      "type": "boolean"
+    },
+    "AFQ_Output_Name": {
+      "default": "afq_output",
+      "type": "string",
+      "description": "AFQ: Output base name for AFQ Results. DEFAULT='afq_output'"
+    },
     "AFQ_Browser_Title": {
       "default": "AFQ_Browser",
       "type": "string",
-      "description": "A title for the AFQ-browser web-page"
+      "description": "AFQ: Title for the AFQ-browser web-page. DEFAULT='AFQ_Browser'"
     }
   }
 }

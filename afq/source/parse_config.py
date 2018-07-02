@@ -49,14 +49,16 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     config['params']['track']['whichAlgorithm']     = config['params']['track_whichAlgorithm']
     config['params']['track']['whichInterp']        = config['params']['track_whichInterp']
 
-
     # # TODO: Add and pull this from the manifest
-    config['params']['track']['mrTrixAlgo']          = "iFOD2"
-    config['params']['track']['multishell']          = False
-    config['params']['track']['tool']                = 'freesurfer'
-    config['params']['track']['life_discretization'] = 360
-    config['params']['track']['life_num_iterations'] = 4
-    config['params']['track']['life_test']           = False
+    config['params']['track']['mrTrixAlgo']          = config['params']['mrtrix_mrTrixAlgo']
+    config['params']['track']['multishell']          = config['params']['mrtrix_multishell']
+    config['params']['track']['tool']                = config['params']['mrtrix_tool']
+    config['params']['track']['life_runLife']        = config['params']['life_runLife']
+    config['params']['track']['life_discretization'] = config['params']['life_discretization']
+    config['params']['track']['life_num_iterations'] = config['params']['life_num_iterations']
+    config['params']['track']['life_test']           = config['params']['life_test']
+    config['params']['track']['life_saveOuput']      = config['params']['life_saveOuput']
+
 
     # Remove the other track_ fields
     del config['params']['track_algorithm']
@@ -73,6 +75,14 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     del config['params']['track_wPuncture']
     del config['params']['track_whichAlgorithm']
     del config['params']['track_whichInterp']
+    del config['params']['mrtrix_mrTrixAlgo']
+    del config['params']['mrtrix_multishell']
+    del config['params']['mrtrix_tool']
+    del config['params']['life_runLife']
+    del config['params']['life_discretization']
+    del config['params']['life_num_iterations']
+    del config['params']['life_test']
+    del config['params']['life_saveOuput']
 
     # Handle cutoffLower and cutoffUpper
     config['params']['cutoff'] = [config['params']['cutoffLower'], config['params']['cutoffUpper'] ]
@@ -85,10 +95,11 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     config['input_dir'] = input_dir
     config['output_dir'] = output_dir
 
-    # Add extra keys
+    # Add additional keys
     config['params']['run_mode'] = [],
     config['params']['outdir'] = []
-    config['params']['outname'] = 'afq_output'
+    config['params']['outname'] = config['params']['AFQ_Output_Name']
+    del config['params']['AFQ_Output_Name']
     config['params']['input_dir'] = input_dir
     config['params']['output_dir'] = output_dir
 
