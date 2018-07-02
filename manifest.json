@@ -361,8 +361,8 @@
       "type": "number"
     },
     "life_num_iterations": {
-      "description": "LiFE: Number of iterations for LiFE algorithm. DEFAULT=4",
-      "default": 4,
+      "description": "LiFE: Number of iterations for LiFE algorithm. DEFAULT=100",
+      "default": 100,
       "type": "number"
     },
     "life_test": {
