@@ -87,6 +87,10 @@ def parse_config(input_file, output_file, input_dir, output_dir):
 
     # Add extra keys
     config['params']['run_mode'] = [],
+    config['params']['outdir'] = []
+    config['params']['outname'] = 'afq_output'
+    config['params']['input_dir'] = input_dir
+    config['params']['output_dir'] = output_dir
 
     # Write out the modified configuration
     with open(output_file, 'w') as config_json:
