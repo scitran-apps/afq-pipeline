@@ -54,13 +54,14 @@ assemble(input_file,
          sublink=False,
          zip=True)
 
-print("Before moving")
-print(glob('./*'))
-print(glob('./*/*',))
+#print("Before moving")
+#print(glob('./*'))
+#print(glob('./*/*',))
 
 import shutil
 shutil.move('AFQ-Browser.zip', op.join(OUTPUT_DIR, 'AFQ-Browser.html.zip'))
 
-print("After moving")
-print(glob('./*'))
-print(glob('./*/*',))
+#print("After moving")
+#print(glob('./*'))
+#print(glob('./*/*',))
+print('[flywheel|afq-browser]  Done!]')
