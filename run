@@ -72,4 +72,7 @@ if [[ $exit_status != 0 ]]; then
   exit $exit_status
 fi
 
+
+echo "$CONTAINER  DONE!"
+
 exit 0
