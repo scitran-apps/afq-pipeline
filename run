@@ -2,18 +2,20 @@
 #
 #
 
-CONTAINER="[scitran/afq-pipeline]"
+CONTAINER="[scitran/afq-pipeline-3]"
 echo -e "$CONTAINER  Initiated"
 
 
 ###############################################################################
 # Built to flywheel-v0 spec.
+
 FLYWHEEL_BASE=/flywheel/v0
 OUTPUT_DIR=$FLYWHEEL_BASE/output
 INPUT_DIR=$FLYWHEEL_BASE/input
 
+
 ###############################################################################
-# Built to flywheel-v0 spec.
+# FSL Merge
 
 ${FLYWHEEL_BASE}/run_fslmerge
 exit_status=$?
@@ -22,6 +24,7 @@ if [[ $exit_status != 0 ]]; then
   echo "$CONTAINER  MERGE failure!"
   exit $exit_status
 fi
+
 
 ###############################################################################
 # DTIINIT
