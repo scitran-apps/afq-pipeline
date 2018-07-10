@@ -79,8 +79,10 @@ RUN apt-get install -y \
 
 ENV mrtrix3COMMIT=8cef83213c4dcce7be1296849bda2b097004dd0c
 RUN curl -#L  https://github.com/MRtrix3/mrtrix3/archive/$mrtrix3COMMIT.zip | bsdtar -xf- -C /usr/lib
-WORKDIR /usr/lib/mrtrix3-${mrtrix3COMMIT}/
-RUN chmod -R +rwx /usr/lib/mrtrix3-${mrtrix3COMMIT}
+WORKDIR /usr/lib/
+RUN mv mrtrix3-${mrtrix3COMMIT} mrtrix3
+RUN chmod -R +rwx /usr/lib/mrtrix3
+WORKDIR /usr/lib/mrtrix3
 RUN  ./configure && \
     ./build && \
     ./set_path
