@@ -15,28 +15,7 @@ INPUT_DIR=$FLYWHEEL_BASE/input
 
 
 ###############################################################################
-# FSL Merge
-
-${FLYWHEEL_BASE}/run_fslmerge
-exit_status=$?
-
-if [[ $exit_status != 0 ]]; then
-  echo "$CONTAINER  MERGE failure!"
-  exit $exit_status
-fi
-
-
-###############################################################################
 # DTIINIT
-
-# Make DTI_INIT DIRECTORIES
-NIFTI_DIR=$INPUT_DIR/dwi
-BVEC_DIR=$INPUT_DIR/bvec
-BVAL_DIR=$INPUT_DIR/bval
-
-mkdir "$NIFTI_DIR" && cp "$OUTPUT_DIR"/*.nii* "$NIFTI_DIR"
-mkdir "$BVEC_DIR"  && cp "$OUTPUT_DIR"/*.bvec* "$BVEC_DIR"
-mkdir "$BVAL_DIR"  && cp "$OUTPUT_DIR"/*.bval* "$BVAL_DIR"
 
 ${FLYWHEEL_BASE}/run_dtiinit
 exit_status=$?

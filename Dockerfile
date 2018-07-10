@@ -139,12 +139,6 @@ COPY dtiinit/source/bin/run ${FLYWHEEL}/run_dtiinit
 COPY dtiinit/source/bin/parse_config.py ${FLYWHEEL}/dtiinit_parse_config.py
 
 
-######################
-# FSLMERGE
-
-COPY fslmerge/source/run ${FLYWHEEL}/run_fslmerge
-
-
 ############################
 # AFQ Browser
 
