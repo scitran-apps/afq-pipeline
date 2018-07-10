@@ -26,8 +26,8 @@
         ]
       }
     },
-    "NIFTI_1": {
-      "description": "NIfTI image to be merged.",
+    "dwi": {
+      "description": "DWI NIfTI file",
       "base": "file",
       "type": {
         "enum": [
@@ -35,18 +35,8 @@
         ]
       }
     },
-    "NIFTI_2": {
-      "description": "NIfTI image to be merged.",
-      "base": "file",
-      "optional": true,
-      "type": {
-        "enum": [
-          "nifti"
-        ]
-      }
-    },
-    "BVAL_1": {
-      "description": "BVAL file to be merged.",
+    "bval": {
+      "description": "BVAL file",
       "base": "file",
       "type": {
         "enum": [
@@ -54,29 +44,9 @@
         ]
       }
     },
-    "BVAL_2": {
-      "description": "BVAL file to be merged.",
+    "bvec": {
+      "description": "BVEC file.",
       "base": "file",
-      "optional": true,
-      "type": {
-        "enum": [
-          "bval"
-        ]
-      }
-    },
-    "BVEC_1": {
-      "description": "BVEC file to be merged.",
-      "base": "file",
-      "type": {
-        "enum": [
-          "bvec"
-        ]
-      }
-    },
-    "BVEC_2": {
-      "description": "BVEC file to be merged.",
-      "base": "file",
-      "optional": true,
       "type": {
         "enum": [
           "bvec"
@@ -85,48 +55,6 @@
     }
   },
   "config": {
-    "catTime": {
-      "description": "FSLMERGE: concatenate images in time [default=false]",
-      "default": false,
-      "type": "boolean",
-      "id": "-t"
-    },
-    "catX": {
-      "description": "FSLMERGE: concatenate images in the x direction [default=false]",
-      "default": false,
-      "type": "boolean",
-      "id": "-x"
-    },
-    "catY": {
-      "description": "FSLMERGE: concatenate images in the y direction  [default=false]",
-      "default": false,
-      "type": "boolean",
-      "id": "-y"
-    },
-    "catZ": {
-      "description": "FSLMERGE: concatenate images in the z direction  [default=false]",
-      "default": false,
-      "type": "boolean",
-      "id": "-z"
-    },
-    "auto": {
-      "description": "FSLMERGE: auto-choose: single slices -> volume, volumes -> 4D (time series) [default=true]",
-      "default": true,
-      "type": "boolean",
-      "id": "-a"
-    },
-    "catTR": {
-      "description": "FSLMERGE: concatenate images in time and set the output image tr to this value. values other than '0' will trigger this option. [default=0, false]",
-      "default": 0,
-      "type": "number",
-      "id": "-tr"
-    },
-    "base_outname": {
-      "description": "FSLMERGE: Base name for output file(s) [by default, 'none' signals the code to use the input filenames, separated by '_', to generate a base name]",
-      "default": "none",
-      "base": "file",
-      "type": "string"
-    },
     "flipLrApFlag": {
       "description": "DTIINIT: This flag will signal dtiRawBuildBvecs to reorient the gradient directions specified in the dwepi.grads file to logical space rather than keeping the directions in scanner space. Thus, the bvecs do not need to be reoriented for oblique prescriptions as with some other DTI sequences. However, this sequence assumes that the 2nd column in dwepi.grads is the phase-encode dim. If your phase-encode is the usual '2', then this is fine. But, if you run ASSET and change the phase encode to L-R (dim 1), you need to swap the first and second columns of dwepi.grads. Also, there appears to be a flip in the phase-encode dim, so you also need to flip the sign on the phase-encode column. DEFAULT=0",
       "default": 0,
