@@ -46,7 +46,7 @@ except:
 ## Call the algorithm
 from afqbrowser.browser import assemble
 assemble(input_file,
-         target=OUTPUT_DIR,
+         target='/tmp/afq',
          metadata=None,
          title=title,
          subtitle=False,
