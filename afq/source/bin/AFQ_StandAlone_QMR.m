@@ -156,7 +156,9 @@ end
 afq = AFQ_Create('sub_dirs', sub_dirs, 'sub_group', sub_group, ...
                  'outdir', output_dir, 'outname', out_name, ...
                  'params', P);  
+
 % disp(afq.params);
+
 % Run control comparison by default
 % if ~isfield(params, 'runcontrolcomp');a
 %     afq.params.runcontrolcomp = false;
