@@ -29,9 +29,7 @@ END
 Matlabr2017a -nodisplay -nosplash -r build && rm build.m
 
 
-# Teh compiled file is bigger than 100Mb, then it fails when pushing to github
-# Use the command below to delete it from all history
-# Add a gitignore so that it never goes back anything in the /compiled folder
+# Teh compiled file is bigger than 100Mb
 # git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch /data/localhome/glerma/soft/afq-pipeline/afq/source/bin/compiled/AFQ_StandAlone_QMR' --prune-empty --tag-name-filter cat -- --all
 
 
