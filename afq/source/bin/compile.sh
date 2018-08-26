@@ -6,11 +6,6 @@ cat > build.m <<END
 addpath(genpath('/data/localhome/glerma/soft/AFQ'));
 addpath(genpath('/data/localhome/glerma/soft/afq-pipeline'));
 addpath(genpath('/data/localhome/glerma/soft/vistasoft'));
-rmpath(genpath('/data/localhome/glerma/soft/vistasoft/mrBOLD'));
-rmpath(genpath('/data/localhome/glerma/soft/vistasoft/mrMesh'));
-rmpath(genpath('/data/localhome/glerma/soft/vistasoft/mrQuant'));
-rmpath(genpath('/data/localhome/glerma/soft/vistasoft/mrTest'));
-rmpath(genpath('/data/localhome/glerma/soft/vistasoft/tutorials'));
 addpath(genpath('/black/localhome/glerma/soft/spm8'));
 rmpath(genpath('/black/localhome/glerma/soft/spm8/toolbox/Beamforming'));
 rmpath(genpath('/black/localhome/glerma/soft/spm8/toolbox/DARTEL'));
