@@ -156,7 +156,9 @@ end
 afq = AFQ_Create('sub_dirs', sub_dirs, 'sub_group', sub_group, ...
                  'outdir', output_dir, 'outname', out_name, ...
                  'params', P);  
-disp(afq.params);
+
+% disp(afq.params);
+
 % Run control comparison by default
 % if ~isfield(params, 'runcontrolcomp');a
 %     afq.params.runcontrolcomp = false;
@@ -306,8 +308,7 @@ end
 
 return
 
-% This is the command used to compile it:
-% mcc -m  -I /black/localhome/glerma/soft/spm8 -I /data/localhome/glerma/soft/vistasoft -I /data/localhome/glerma/soft/jsonlab /data/localhome/glerma/soft/afq-pipeline/afq/source/bin/AFQ_StandAlone_QMR.m  
+% Use compile.sh to compile this file 
 % This is the command used to launch it with the MCR
 % ./run_AFQ_StandAlone_QMR.sh /data/localhome/glerma/soft/matlab/mcr92/v92   '{\"input_dir\" : \"/data/localhome/glerma/TESTDATA/AFQ/input/dtiInit111_mcr/dti90trilin\", \"output_dir\": \"/data/localhome/glerma/TESTDATA/AFQ/output/withDtiinit111_mrtrix_mcr\",\"params\"    :\"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json\"}'
 
