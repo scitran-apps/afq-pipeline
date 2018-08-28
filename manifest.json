@@ -8,12 +8,12 @@
   "url": "https://github.com/yeatmanlab/afq",
   "source": "https://github.com/scitran-apps/afq-pipline",
   "license": "Other",
-  "flywheel": {
-    "suite": "VISTA Lab"
-  },
-  "version": "3.0.0_rc1",
+  "flywheel": "0",
+  "version": "3.0.0",
   "custom": {
-    "docker-image": "scitran/afq-pipeline:3.0.0"
+    "gear-builder": {
+      "image": "scitran/afq-pipeline:3.0.0"
+                }
   },
   "inputs": {
     "anatomical": {
