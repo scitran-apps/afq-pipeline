@@ -49,7 +49,6 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     config['params']['track']['whichAlgorithm']     = config['params']['track_whichAlgorithm']
     config['params']['track']['whichInterp']        = config['params']['track_whichInterp']
 
-    # # TODO: Add and pull this from the manifest
     config['params']['track']['mrTrixAlgo']          = config['params']['mrtrix_mrTrixAlgo']
     config['params']['track']['multishell']          = config['params']['mrtrix_multishell']
     config['params']['track']['tool']                = config['params']['mrtrix_tool']
@@ -58,7 +57,13 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     config['params']['track']['life_num_iterations'] = config['params']['life_num_iterations']
     config['params']['track']['life_test']           = config['params']['life_test']
     config['params']['track']['life_saveOutput']     = config['params']['life_saveOutput']
+    config['params']['track']['life_writePDB']       = config['params']['life_writePDB']
 
+    config['params']['track']['ET_runET']            = config['params']['ET_runET']
+    config['params']['track']['ET_numberFibers']     = config['params']['ET_numberFibers']
+    config['params']['track']['ET_angleValues']      = [ float(x) for x in config['params']['ET_angleValues'].split(',') ]
+    config['params']['track']['ET_minlength']        = config['params']['ET_minlength']
+    config['params']['track']['ET_maxlength']        = config['params']['ET_maxlength']
 
     # Remove the other track_ fields
     del config['params']['track_algorithm']
@@ -83,6 +88,11 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     del config['params']['life_num_iterations']
     del config['params']['life_test']
     del config['params']['life_saveOutput']
+    del config['params']['life_writePDB']
+    del config['params']['ET_numberFibers']
+    del config['params']['ET_angleValues']
+    del config['params']['ET_minlength']
+    del config['params']['ET_maxlength']
 
     # Handle cutoffLower and cutoffUpper
     config['params']['cutoff'] = [config['params']['cutoffLower'], config['params']['cutoffUpper'] ]
