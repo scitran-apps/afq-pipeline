@@ -4,7 +4,7 @@
   "description": "This gear contains a 6-step pipeline designed to run AFQ. The first step is optional, and will merge two diffusion datasets using FSLMERGE. The second step is data preprocessing using DTIINIT, from the VISTA Lab, Stanford University. The third step is fiber tract generation with MRtrix3, the fourth step is LiFE, followed by the Automated Fiber Quantification (AFQ), which generates tract profiles of tissue properties for major fiber tracts in the brain. The sixth and final step is generation of AFQ Browser outputs for visualization.",
   "maintainer": "Michael Perry <lmperry@stanford.edu>",
   "author": "Jason D. Yeatman, et. al, VISTA Lab, FMRIB Software Laboratory",
-  "cite": "Yeatman J.D., Dougherty R.F., Myall N.J., Wandell B.A., Feldman H.M. (2012). Tract Profiles of White Matter Properties: Automating Fiber-Tract Quantification. PLoS One.; M. Jenkinson, C.F. Beckmann, T.E. Behrens, M.W. Woolrich, S.M. Smith. FSL. NeuroImage, 62:782-90, 2012.  Evaluation and statistical inference for human connectomes. F. Pestilli, J.D. Yeatman, A. Rokem, K.N. Kay & B.A. Wandell (2014) Nature Methods doi:10.1038/nmeth.3098 Published online 07 September 2014. https://mrtrix.readthedocs.io/en/latest/reference/references.html",
+  "cite": "Yeatman J.D., Dougherty R.F., Myall N.J., Wandell B.A., Feldman H.M. (2012). Tract Profiles of White Matter Properties: Automating Fiber-Tract Quantification. PLoS One.; M. Jenkinson, C.F. Beckmann, T.E. Behrens, M.W. Woolrich, S.M. Smith. FSL. NeuroImage, 62:782-90, 2012.  Evaluation and statistical inference for human connectomes. F. Pestilli, J.D. Yeatman, A. Rokem, K.N. Kay & B.A. Wandell (2014) Nature Methods doi:10.1038/nmeth.3098 Published online 07 September 2014. https://mrtrix.readthedocs.io/en/latest/reference/references.html.  Takemura H, Caiafa CF, Wandell BA, Pestilli F (2016) Ensemble Tractography. PLoS Comput Biol 12(2): e1004692. https://doi.org/10.1371/journal.pcbi.1004692",
   "url": "https://github.com/yeatmanlab/afq",
   "source": "https://github.com/scitran-apps/afq-pipline",
   "license": "Other",
@@ -13,7 +13,7 @@
   "custom": {
     "gear-builder": {
       "image": "scitran/afq-pipeline:3.0.0"
-                }
+    }
   },
   "inputs": {
     "anatomical": {
@@ -305,6 +305,11 @@
       "default": false,
       "type": "boolean"
     },
+    "life_writePDB": {
+      "description": "LiFE: Write fibers out in PDB. DEFAULT=False",
+      "default": false,
+      "type": "boolean"
+    },
     "AFQ_Output_Name": {
       "default": "afq_output",
       "type": "string",
@@ -314,6 +319,31 @@
       "default": "AFQ_Browser",
       "type": "string",
       "description": "AFQ: Title for the AFQ-browser web-page. DEFAULT='AFQ_Browser'"
+    },
+    "ET_runET": {
+      "description": "ET: Run Ensemble Tractography. DEFAULT=False",
+      "default": true,
+      "type": "boolean"
+    },
+    "ET_numberFibers": {
+      "description": "ET: Number of fibers to generate. DEFAULT=500000",
+      "default": 500000,
+      "type": "number"
+    },
+    "ET_minlength": {
+      "description": "ET: Minimum fiber length (in mm). DEFAULT=10",
+      "default": 10,
+      "type": "number"
+    },
+    "ET_maxlength": {
+      "description": "ET: Maximum fiber length (in mm). DEFAULT=250",
+      "default": 250,
+      "type": "number"
+    },
+    "ET_angleValues": {
+      "description": "ET: Angle cutoff values to use during ET tracking (comma-separated list). DEFAULT='47.2, 23.1, 11.5, 5.7, 2.9'",
+      "default": "47.2, 23.1, 11.5, 5.7, 2.9",
+      "type": "string"
     }
   }
 }
