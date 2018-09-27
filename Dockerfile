@@ -99,9 +99,15 @@ COPY dtiinit/source/bin/dtiInit_glnxa64_v92 /usr/local/bin/dtiInit
 # Add bet2 (FSL) to the container
 ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrAnatomy/Segment/bet2 /usr/local/bin/
 
+# ADD AFQ and mrD templates via svn hackery
+ENV TEMPLATES /templates
+RUN mkdir $TEMPLATES
+RUN svn export --force https://github.com/yeatmanlab/AFQ.git/trunk/templates/ $TEMPLATES
+RUN svn export --force https://github.com/vistalab/vistasoft.git/trunk/mrDiffusion/templates/ $TEMPLATES
+
 # Add the MNI_EPI template and JSON schema files to the container
-ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrDiffusion/templates/MNI_EPI.nii.gz /templates/
-ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrDiffusion/dtiInit/standalone/dtiInitStandAloneJsonSchema.json /templates/
+ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrDiffusion/templates/MNI_EPI.nii.gz $TEMPLATES
+ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrDiffusion/dtiInit/standalone/dtiInitStandAloneJsonSchema.json $TEMPLATES
 
 # Copy the help text to display when no args are passed in.
 COPY dtiinit/source/doc/help.txt /opt/help.txt
@@ -171,12 +177,6 @@ COPY afq/run ${FLYWHEEL}/run_afq
 COPY afq/source/parse_config.py ${FLYWHEEL}/afq_parse_config.py
 RUN chmod +x /usr/local/bin/AFQ ${FLYWHEEL}/afq_parse_config.py
 
-
-# ADD AFQ and mrD templates via svn hackery
-ENV TEMPLATES /templates
-RUN mkdir $TEMPLATES
-RUN svn export --force https://github.com/yeatmanlab/AFQ.git/trunk/templates/ $TEMPLATES
-RUN svn export --force https://github.com/vistalab/vistasoft.git/trunk/mrDiffusion/templates/ $TEMPLATES
 
 # Set the diplay env variable for xvfb
 ENV DISPLAY :1.0
