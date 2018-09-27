@@ -49,6 +49,22 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     config['params']['track']['whichAlgorithm']     = config['params']['track_whichAlgorithm']
     config['params']['track']['whichInterp']        = config['params']['track_whichInterp']
 
+    config['params']['track']['mrTrixAlgo']          = config['params']['mrtrix_mrTrixAlgo']
+    config['params']['track']['multishell']          = config['params']['mrtrix_multishell']
+    config['params']['track']['tool']                = config['params']['mrtrix_tool']
+    config['params']['track']['life_runLife']        = config['params']['life_runLife']
+    config['params']['track']['life_discretization'] = config['params']['life_discretization']
+    config['params']['track']['life_num_iterations'] = config['params']['life_num_iterations']
+    config['params']['track']['life_test']           = config['params']['life_test']
+    config['params']['track']['life_saveOutput']     = config['params']['life_saveOutput']
+    config['params']['track']['life_writePDB']       = config['params']['life_writePDB']
+
+    config['params']['track']['ET_runET']            = config['params']['ET_runET']
+    config['params']['track']['ET_numberFibers']     = config['params']['ET_numberFibers']
+    config['params']['track']['ET_angleValues']      = [ float(x) for x in config['params']['ET_angleValues'].split(',') ]
+    config['params']['track']['ET_minlength']        = config['params']['ET_minlength']
+    config['params']['track']['ET_maxlength']        = config['params']['ET_maxlength']
+
     # Remove the other track_ fields
     del config['params']['track_algorithm']
     del config['params']['track_angleThresh']
@@ -64,6 +80,19 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     del config['params']['track_wPuncture']
     del config['params']['track_whichAlgorithm']
     del config['params']['track_whichInterp']
+    del config['params']['mrtrix_mrTrixAlgo']
+    del config['params']['mrtrix_multishell']
+    del config['params']['mrtrix_tool']
+    del config['params']['life_runLife']
+    del config['params']['life_discretization']
+    del config['params']['life_num_iterations']
+    del config['params']['life_test']
+    del config['params']['life_saveOutput']
+    del config['params']['life_writePDB']
+    del config['params']['ET_numberFibers']
+    del config['params']['ET_angleValues']
+    del config['params']['ET_minlength']
+    del config['params']['ET_maxlength']
 
     # Handle cutoffLower and cutoffUpper
     config['params']['cutoff'] = [config['params']['cutoffLower'], config['params']['cutoffUpper'] ]
@@ -72,26 +101,17 @@ def parse_config(input_file, output_file, input_dir, output_dir):
     del config['params']['cutoffUpper']
     del config['params']['cutoffLower']
 
-    # Handle QMR fields
-    config['metadata'] = {}
-    config['metadata']['age']           = config['params']['qmr_meatadata_age']
-    config['metadata']['sex']           = config['params']['qmr_metadata_sex']
-    config['metadata']['age_comp']      = config['params']['qmr_metadata_age_comp']
-    config['metadata']['ndirs']         = config['params']['qmr_metadata_ndirs']
-    config['metadata']['bvalue']        = config['params']['qmr_metadata_bvalue']
-    config['params']['runcontrolcomp']  = config['params']['qmr_runcontrolcomp']
-
-    # Remove qmr fields
-    del config['params']['qmr_meatadata_age']
-    del config['params']['qmr_metadata_sex']
-    del config['params']['qmr_metadata_age_comp']
-    del config['params']['qmr_metadata_ndirs']
-    del config['params']['qmr_metadata_bvalue']
-    del config['params']['qmr_runcontrolcomp']
-
     # Add input directory for dtiInit
     config['input_dir'] = input_dir
     config['output_dir'] = output_dir
+
+    # Add additional keys
+    config['params']['run_mode'] = [],
+    config['params']['outdir'] = []
+    config['params']['outname'] = config['params']['AFQ_Output_Name']
+    del config['params']['AFQ_Output_Name']
+    config['params']['input_dir'] = input_dir
+    config['params']['output_dir'] = output_dir
 
     # Write out the modified configuration
     with open(output_file, 'w') as config_json:
