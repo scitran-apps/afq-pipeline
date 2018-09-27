@@ -97,7 +97,7 @@ ENV PATH /usr/lib/mrtrix3/bin:$PATH
 # ENV PATH /usr/lib/ants:/usr/lib/mrtrix/bin:$PATH
 
 # ADD the source Code and Binary to the container
-COPY afq/source/bin/AFQ_StandAlone_QMR /usr/local/bin/AFQ
+COPY afq/source/bin/compiled/AFQ_StandAlone_QMR /usr/local/bin/AFQ
 COPY afq/run ${FLYWHEEL}/run_afq
 COPY afq/source/parse_config.py ${FLYWHEEL}/afq_parse_config.py
 RUN chmod +x /usr/local/bin/AFQ ${FLYWHEEL}/afq_parse_config.py
