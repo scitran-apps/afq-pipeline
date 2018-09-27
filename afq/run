@@ -9,11 +9,11 @@ echo -e "$CONTAINER  Initiated"
 
 # Configure the ENV
 export FSLOUTPUTTYPE=NIFTI_GZ
-export LD_LIBRARY_PATH=/opt/mcr/v82/runtime/glnxa64:/opt/mcr/v82/bin/glnxa64:/opt/mcr/v82/sys/os/glnxa64:/opt/mcr/v82/sys/java/jre/glnxa64/jre/lib/amd64/native_threads:/opt/mcr/v82/sys/java/jre/glnxa64/jre/lib/amd64/server:/opt/mcr/v82/sys/java/jre/glnxa64/jre/lib/amd64:$LD_LIBRARY_PATH
-export XAPPLRESDIR=/opt/mcr/v82/X11/app-defaults
+export LD_LIBRARY_PATH=/opt/mcr/v92/runtime/glnxa64:/opt/mcr/v92/bin/glnxa64:/opt/mcr/v92/sys/os/glnxa64:$LD_LIBRARY_PATH
+export XAPPLRESDIR=/opt/mcr/v92/X11/app-defaults
 
 # Add mrtrix and ants to the path
-export PATH=/usr/lib/ants:/usr/lib/mrtrix/bin:$PATH
+export PATH=/usr/lib/ants:/usr/lib/mrtrix3/bin:$PATH
 
 # Set DISPLAY for xvfb
 export DISPLAY=:1.0
@@ -31,7 +31,6 @@ ZIP_DIR=$INPUT_DIR/dtiInit_Archive # Must match input from the manifest
 WORK_DIR=$INPUT_DIR/work
 CONFIG_FILE=${FLYWHEEL_BASE}/config.json
 PARAMS_FILE=${WORK_DIR}/AFQ_params.json
-LOG_FILE=$OUTPUT_DIR/AFQ_log.txt
 
 # Ensure there is an output directory
 if [[ ! -d "$OUTPUT_DIR" ]]
@@ -58,7 +57,7 @@ $FLYWHEEL_BASE/afq_parse_config.py --input_file ${CONFIG_FILE} --output_file ${P
 cp ${PARAMS_FILE} ${OUTPUT_DIR}
 
 # Start Xvfb and pass the input arguments to AFQ execute the algorithm
-start_xvfb && time /usr/local/bin/AFQ "$PARAMS_FILE" 2>&1 | tee $LOG_FILE
+start_xvfb && time /usr/local/bin/AFQ "$PARAMS_FILE"
 
 # Xvfb occasionally hangs -- make sure that Xvfb dies
 kill -9 %1
@@ -76,59 +75,10 @@ then
   exit 1
 else
 
-  # Process figures
-  FIGURES_DIR=$AFQ_DIR/figures
-  PDF_DIR=$AFQ_DIR/pdfs
-  mkdir $PDF_DIR
-
-  # Summary pdf
-  echo -e "$CONTAINER  Converting figures to pdf"
-  f=$(find "$FIGURES_DIR"/* -maxdepth 0 -name "*.png")
-  if [[ -n ${f} ]]; then
-    convert "$FIGURES_DIR/*.{png}" $PDF_DIR/AFQ_Summary.pdf
-  else
-    echo -e "$CONTAINER  No SUMMARY figures found!"
-  fi
-    # Pdf for each measure
-  f=$(find "$FIGURES_DIR"/md/* -maxdepth 0 -name "*.png")
-  if [[ -n ${f} ]]; then
-    convert "$FIGURES_DIR/md/*.{png}" $PDF_DIR/AFQ_Figures_Mean_Diffusivity.pdf
-  else
-    echo -e "$CONTAINER  No MD figures found!"
-  fi
-  f=$(find "$FIGURES_DIR"/ad/* -maxdepth 0 -name "*.png")
-  if [[ -n ${f} ]]; then
-    convert "$FIGURES_DIR/ad/*.{png}" $PDF_DIR/AFQ_Figures_Axial_Diffusivity.pdf
-  else
-    echo -e "$CONTAINER  No AD figures found!"
-  fi
-  f=$(find "$FIGURES_DIR"/rd/* -maxdepth 0 -name "*.png")
-  if [[ -n ${f} ]]; then
-    convert "$FIGURES_DIR/rd/*.{png}" $PDF_DIR/AFQ_Figures_Radial_Diffusivity.pdf
-  else
-    echo -e "$CONTAINER  No RD figures found!"
-  fi
-  f=$(find "$FIGURES_DIR"/fa/* -maxdepth 0 -name "*.png")
-  if [[ -n ${f} ]]; then
-    convert "$FIGURES_DIR/fa/*.{png}" $PDF_DIR/AFQ_Figures_Fractional_Anisotropy.pdf
-  else
-    echo -e "$CONTAINER  No FA figures found!"
-  fi
-
-  # Copy pdf, csv, mat, gif, and json files to output
-  f=$(find "$PDF_DIR"/* -maxdepth 0 -name "*.pdf")
-  if [[ -n ${f} ]]; then
-    cp $PDF_DIR/*.pdf $OUTPUT_DIR
-  fi
-
+  # Copy csv, mat, and json files to output
   cp $AFQ_DIR/csv_files/*.csv $OUTPUT_DIR
   cp $AFQ_DIR/*.mat $AFQ_DIR/*.json $OUTPUT_DIR
 
-  if [[ -e $FIGURES_DIR/000_RotatingFibers.gif ]]; then
-    cp $FIGURES_DIR/000_RotatingFibers.gif $OUTPUT_DIR/AFQ_Fiber_Rendering.gif
-  else
-    echo -e "[$CONTAINER]  GIF image not found!"
-  fi
 
   # Copy DTIINIT input/ouputs to AFQ
   cp -a $AFQ_INPUT_DIR $AFQ_DIR
@@ -140,7 +90,7 @@ else
   cd $OUTPUT_DIR
   mv AFQ $AFQ_NAME
   chmod -R 777 $OUTPUT_DIR
-  echo -e "[$CONTAINER]  compressing outputs..."
+  echo -e "$CONTAINER  compressing outputs..."
   zip -r AFQ_Output_$AFQ_NAME.zip $AFQ_NAME && rm -rf $AFQ_NAME
 
   # Set permissions for outputs (prevent root only r/w)
