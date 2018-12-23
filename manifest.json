@@ -77,7 +77,7 @@
     },
     "eddyCorrect": {
       "description": "DTIINIT: Motion and eddy-current correction. Options 0, 1, -1. 0=Only motion correction is done. 1=Do eddy-current and motion correction. -1=No motion or eddy correction. DEFAULT=1",
-      "default": 1,
+      "default": -1,
       "type": "integer"
     },
     "bsplineInterpFlag": {
@@ -172,7 +172,7 @@
     },
     "savefigs": {
       "description": "AFQ: Save figures of fiber groups. (1=yes, 0=no)",
-      "default": 0,
+      "default": 1,
       "type": "integer"
     },
     "computeCSD": {
@@ -297,7 +297,7 @@
     },
     "life_num_iterations": {
       "description": "LiFE: Number of iterations for LiFE algorithm. DEFAULT=100",
-      "default": 100,
+      "default": 5,
       "type": "number"
     },
     "life_test": {
@@ -326,8 +326,8 @@
       "type": "boolean"
     },
     "ET_numberFibers": {
-      "description": "ET: Number of fibers to generate. DEFAULT=500000",
-      "default": 500000,
+      "description": "ET: Number of fibers to generate. DEFAULT=200000",
+      "default": 200000,
       "type": "number"
     },
     "ET_minlength": {
