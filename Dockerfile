@@ -56,6 +56,7 @@ RUN apt-get update && apt-get install -y --force-yes \
     wget \
     subversion \
     fsl-5.0-core \
+    fsl-first-data \
     jq \
     ants
 
@@ -97,7 +98,7 @@ ENV PATH /usr/lib/mrtrix3/bin:$PATH
 # ENV PATH /usr/lib/ants:/usr/lib/mrtrix/bin:$PATH
 
 # ADD the source Code and Binary to the container
-COPY afq/source/bin/AFQ_StandAlone_QMR /usr/local/bin/AFQ
+COPY afq/source/bin/compiled/AFQ_StandAlone_QMR /usr/local/bin/AFQ
 COPY afq/run ${FLYWHEEL}/run_afq
 COPY afq/source/parse_config.py ${FLYWHEEL}/afq_parse_config.py
 RUN chmod +x /usr/local/bin/AFQ ${FLYWHEEL}/afq_parse_config.py
@@ -117,7 +118,7 @@ ENV DISPLAY :1.0
 # DTIINIT
 
 # ADD the dtiInit Matlab Stand-Alone (MSA) into the container.
-COPY dtiinit/source/bin/dtiInit_glnxa64_v92 /usr/local/bin/dtiInit
+COPY dtiinit/source/bin/dtiInitStandAloneWrapper /usr/local/bin/dtiInit
 
 # Add bet2 (FSL) to the container
 ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrAnatomy/Segment/bet2 /usr/local/bin/
@@ -137,8 +138,8 @@ ENV FSLOUTPUTTYPE NIFTI_GZ
 
 # Copy and configure code
 WORKDIR ${FLYWHEEL}
-COPY dtiinit/source/bin/run ${FLYWHEEL}/run_dtiinit
-COPY dtiinit/source/bin/parse_config.py ${FLYWHEEL}/dtiinit_parse_config.py
+COPY dtiinit/source/run ${FLYWHEEL}/run_dtiinit
+COPY dtiinit/source/parse_config.py ${FLYWHEEL}/dtiinit_parse_config.py
 
 
 ############################

@@ -15,16 +15,23 @@ function AFQ_StandAlone_QMR(jsonargs)
 %                           ndirs = 30;
 %                           bvalue = 1000;
 %                           age_comp = false;
-%
+%{
 % EXAMPLE USAGE:
 %       jsonargs = '{"input_dir": "/home/lmperry/AFQ_docker/mrDiffusion_sampleData/dti40", "out_name": "afq.mat", "output_dir": "/black/lmperry/AFQ_docker/mrDiffusion_sampleData/dti40/AFQ3" }'
-%       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/input/dtiInit222/dti90trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/withDtiinit222_mrtrix","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
-%       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/input/dtiInit111/dti90trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/withDtiinit111_mrtrix","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
+%       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/input/dtiInit222/dti90trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/withDtiinit222_mrtrix","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'%       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/input/dtiInit111/dti90trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/withDtiinit111_mrtrix","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
 %       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/input/dtiInit222/dti90trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/withDtiinit222_mrtrix","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
 %       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/input/MareikeS13/dti96trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/MareikeS13","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
-%       
-%       AFQ_StandAlone_QMR(jsonargs);
-%
+%       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/input/MareikeS13act/dti96trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/MareikeS13act","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
+jsonargs = ['{"input_dir" :' ...
+            '"/data/localhome/glerma/TESTDATA/AFQ/input/MareikeS13/dti96trilin",' ...
+            '"output_dir": ' ...
+            '"/data/localhome/glerma/TESTDATA/AFQ/output/MareikeS13", ' ...
+            '"params"    : ' ...
+            '"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}']
+%       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/output/MareikeS03b/afq_20-Dec-2018_19h34m56s/dti96trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/MareikeS03","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
+       
+AFQ_StandAlone_QMR(jsonargs);
+%}
 %
 %#ok<*AGROW>
 
@@ -47,8 +54,6 @@ disp(jsonargs)
 
 
 if exist('jsonargs', 'var') && ~isempty(jsonargs);
-    
-   
     args = loadjson(jsonargs);
 
     if isfield(args, 'input_dir')

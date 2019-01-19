@@ -5,19 +5,29 @@
   "maintainer": "Michael Perry <lmperry@stanford.edu>",
   "author": "Jason D. Yeatman, et. al, VISTA Lab, FMRIB Software Laboratory",
   "cite": "Yeatman J.D., Dougherty R.F., Myall N.J., Wandell B.A., Feldman H.M. (2012). Tract Profiles of White Matter Properties: Automating Fiber-Tract Quantification. PLoS One.; M. Jenkinson, C.F. Beckmann, T.E. Behrens, M.W. Woolrich, S.M. Smith. FSL. NeuroImage, 62:782-90, 2012.  Evaluation and statistical inference for human connectomes. F. Pestilli, J.D. Yeatman, A. Rokem, K.N. Kay & B.A. Wandell (2014) Nature Methods doi:10.1038/nmeth.3098 Published online 07 September 2014. https://mrtrix.readthedocs.io/en/latest/reference/references.html.  Takemura H, Caiafa CF, Wandell BA, Pestilli F (2016) Ensemble Tractography. PLoS Comput Biol 12(2): e1004692. https://doi.org/10.1371/journal.pcbi.1004692",
-  "url": "https://github.com/yeatmanlab/afq",
+  "url": "https://github.com/scitran/afq",
   "source": "https://github.com/scitran-apps/afq-pipline",
   "license": "Other",
   "flywheel": "0",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "custom": {
     "gear-builder": {
-      "image": "scitran/afq-pipeline:3.0.0"
+      "image": "scitran/afq-pipeline:3.0.1"
     }
   },
   "inputs": {
     "anatomical": {
       "description": "OPTIONAL: Anatomical (e.g., t1-weighted) NIfTI file. During the initial phase of processing the diffusion data (b=0 images) will be aligned to this image. By default the DWI data will be aligned to the MNI_EPI template.",
+      "base": "file",
+      "optional": true,
+      "type": {
+        "enum": [
+          "nifti"
+        ]
+      }
+    },
+    "aparcaseg": {
+      "description": "OPTIONAL: Anatomical aparc+aseg NIfTI file from freesurfer. It will be used to create the required files to run ACT tractography in mrTrix",
       "base": "file",
       "optional": true,
       "type": {
@@ -270,6 +280,21 @@
       "default": "iFOD2",
       "type": "string"
     },
+    "mrtrix_useACT": {
+      "description": "MRTRIX: Use ACT for tracking. The optional file aparc+aseg must be provided. DEFAULT=False",
+      "default": false,
+      "type": "string"
+    },
+    "mrtrix_autolmax": {
+      "description": "MRTRIX: Calculate lmax automatically from number of directions. DEFAULT=True",
+      "default": true,
+      "type": "string"
+    },
+    "mrtrix_lmax": {
+      "description": "MRTRIX: specify lmax for CSD. Only used if mrtrix_autolmax==0. DEFAULT=4",
+      "default": 8,
+      "type": "integer"
+    },
     "mrtrix_multishell": {
       "description": "MRTRIX: Set to true if this is multi-shell input data. DEFAULT=False",
       "default": false,
@@ -287,7 +312,7 @@
     },
     "life_saveOutput": {
       "description": "LiFE: Save outputs from LiFE algorithm. DEFAULT=true",
-      "default": true,
+      "default": false,
       "type": "boolean"
     },
     "life_discretization": {
@@ -332,7 +357,7 @@
     },
     "ET_minlength": {
       "description": "ET: Minimum fiber length (in mm). DEFAULT=10",
-      "default": 10,
+      "default": 20,
       "type": "number"
     },
     "ET_maxlength": {
