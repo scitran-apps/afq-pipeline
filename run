@@ -6,6 +6,7 @@ CONTAINER="[scitran/afq-pipeline]"
 echo -e "$CONTAINER  Initiated"
 
 
+
 ###############################################################################
 # Built to flywheel-v0 spec.
 

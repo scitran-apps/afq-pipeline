@@ -56,6 +56,7 @@ RUN apt-get update && apt-get install -y --force-yes \
     wget \
     subversion \
     fsl-5.0-core \
+    fsl-first-data \
     jq \
     ants
 
@@ -91,10 +92,13 @@ ENV PATH /usr/lib/mrtrix3/bin:$PATH
 
 
 ############################
-# DTIINIT
+# AFQ
 
-# ADD the dtiInit Matlab Stand-Alone (MSA) into the container.
-COPY dtiinit/source/bin/dtiInit_glnxa64_v92 /usr/local/bin/dtiInit
+# ADD the source Code and Binary to the container
+COPY afq/source/bin/compiled/AFQ_StandAlone_QMR /usr/local/bin/AFQ
+COPY afq/run ${FLYWHEEL}/run_afq
+COPY afq/source/parse_config.py ${FLYWHEEL}/afq_parse_config.py
+RUN chmod +x /usr/local/bin/AFQ ${FLYWHEEL}/afq_parse_config.py
 
 # Add bet2 (FSL) to the container
 ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrAnatomy/Segment/bet2 /usr/local/bin/
@@ -102,8 +106,21 @@ ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrAnatomy/Segment/bet2 /us
 # ADD AFQ and mrD templates via svn hackery
 ENV TEMPLATES /templates
 RUN mkdir $TEMPLATES
-RUN svn export --force https://github.com/yeatmanlab/AFQ.git/trunk/templates/ $TEMPLATES
+RUN svn export --force https://github.com/scitran/AFQ.git/trunk/templates/ $TEMPLATES
 RUN svn export --force https://github.com/vistalab/vistasoft.git/trunk/mrDiffusion/templates/ $TEMPLATES
+
+# Set the diplay env variable for xvfb
+ENV DISPLAY :1.0
+
+
+############################
+# DTIINIT
+
+# ADD the dtiInit Matlab Stand-Alone (MSA) into the container.
+COPY dtiinit/source/bin/dtiInitStandAloneWrapper /usr/local/bin/dtiInit
+
+# Add bet2 (FSL) to the container
+ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrAnatomy/Segment/bet2 /usr/local/bin/
 
 # Add the MNI_EPI template and JSON schema files to the container
 ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrDiffusion/templates/MNI_EPI.nii.gz $TEMPLATES
@@ -120,8 +137,8 @@ ENV FSLOUTPUTTYPE NIFTI_GZ
 
 # Copy and configure code
 WORKDIR ${FLYWHEEL}
-COPY dtiinit/source/bin/run ${FLYWHEEL}/run_dtiinit
-COPY dtiinit/source/bin/parse_config.py ${FLYWHEEL}/dtiinit_parse_config.py
+COPY dtiinit/source/run ${FLYWHEEL}/run_dtiinit
+COPY dtiinit/source/parse_config.py ${FLYWHEEL}/dtiinit_parse_config.py
 
 
 ############################
