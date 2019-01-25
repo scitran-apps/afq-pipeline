@@ -81,7 +81,7 @@ function dtiInitStandAloneWrapper(json)
 % 
 % Use compile.sh for compiling
 % Use this command to launch in matlab
-%   dtiInitStandAloneWrapper('/data/localhome/glerma/soft/vistasoft/mrDiffusion/dtiInit/standalone/dtiInit.json')
+%   dtiInitStandAloneWrapper('/data/localhome/glerma/soft/afq-pipeline/dtiinit/source/dtiInit.json')
 % Use this command to run the docker in the directory
 % 
 % 
@@ -97,7 +97,7 @@ function dtiInitStandAloneWrapper(json)
 %% Initial checks
 
 % If nothing was passed in, display help and return
-if nargin == 0;
+if nargin == 0
     help_file = '/opt/help.txt';
     if exist(help_file, 'file')
         system(['cat ', help_file]);
