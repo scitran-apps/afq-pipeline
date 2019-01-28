@@ -22,39 +22,39 @@ function dtiInitStandAloneWrapper(json)
 %       See dtiInitParams.m for more info regarding params. Note that
 %       "input_dir" and "output_dir" are required and must be in the
 %       context of the container. 
-% 
-%             { 
-%                 "input_dir": "/input",
-%                 "output_dir": "/output",
-%                 "dwi_file": "",
-%                 "bvec_file": "",
-%                 "bval_file": "",
-%                 "t1_file": "",
-%                 "aparcaseg_file": "",
-%                 "params":  
-%                     {
-%                         "bvalue": "",
-%                         "gradDirsCode": "",
-%                         "clobber": 0,
-%                         "dt6BaseName": "",
-%                         "flipLrApFlag": 0,
-%                         "numBootStrapSamples": 500,
-%                         "fitMethod": "ls",
-%                         "nStep": 50,
-%                         "eddyCorrect": 0,
-%                         "excludeVols": "",
-%                         "bsplineInterpFlag": 0,
-%                         "phaseEncodeDir": "",
-%                         "dwOutMm": [2, 2, 2],
-%                         "rotateBvecsWithRx": 0,
-%                         "rotateBvecsWithCanXform": 0,
-%                         "bvecsFile": "",
-%                         "bvalsFile": "",
-%                         "noiseCalcMethod": "b0",
-%                         "outDir": "/output/"
-%                     }
-%             }
-% 
+%{
+            { 
+                "input_dir": "/input",
+                "output_dir": "/output",
+                "dwi_file": "",
+                "bvec_file": "",
+                "bval_file": "",
+                "t1_file": "",
+                "aparcaseg_file": "",
+                "params":  
+                    {
+                        "bvalue": "",
+                        "gradDirsCode": "",
+                        "clobber": 0,
+                        "dt6BaseName": "",
+                        "flipLrApFlag": 0,
+                        "numBootStrapSamples": 500,
+                        "fitMethod": "ls",
+                        "nStep": 50,
+                        "eddyCorrect": 0,
+                        "excludeVols": "",
+                        "bsplineInterpFlag": 0,
+                        "phaseEncodeDir": "",
+                        "dwOutMm": [2, 2, 2],
+                        "rotateBvecsWithRx": 0,
+                        "rotateBvecsWithCanXform": 0,
+                        "bvecsFile": "",
+                        "bvalsFile": "",
+                        "noiseCalcMethod": "b0",
+                        "outDir": "/output/"
+                    }
+            }
+%}
 % 
 % REQUIRED INPUTS:
 %       'input_dir' and 'output_dir' are the only required inputs.  
@@ -84,10 +84,8 @@ function dtiInitStandAloneWrapper(json)
 %   dtiInitStandAloneWrapper('/data/localhome/glerma/soft/afq-pipeline/dtiinit/source/dtiInit.json')
 % Use this command to run the docker in the directory
 % 
-% 
 % (C) Vista Lab, Stanford University, 2015
 % 
-
 % TODO:
 %   - Reproducibility
 %   - Remote download of input files
@@ -222,6 +220,24 @@ disp(dwParams);
 % dtiInitStandAloneValidateJson(J);
 % fprintf('Success.\n');
 
+
+
+% Validate that the bval values are normalized
+% If not, write again the file normalized so that it can be read downstream
+% Determine shell
+bvals = dlmread(J.bval_file);
+roundedBval  = 100 * round(bvals/100);
+paramsShells = unique(roundedBval);
+if 0 == min(paramsShells)
+    paramsShells = paramsShells(paramsShells ~= 0);
+    numShells    = length(paramsShells);
+else
+    error('It seems that this file have no b0. Check it please.')
+end
+
+% Write the files back
+warning('The bVals were normalized.\n')
+dlmwrite(J.bval_file, roundedBval, 'delimiter',' ');
 
 %% Run dtiInit
 

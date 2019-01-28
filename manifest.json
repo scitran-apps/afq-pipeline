@@ -1,7 +1,7 @@
 {
   "name": "afq-pipeline",
-  "label": "AFQ Pipeline: Automated Fiber Quantification Pipeline (DTIInit + MRtrix3 + ET + LiFE + AFQ)",
-  "description": "This gear contains a multi-step pipeline designed to run DTIInit, MRtrix3, LiFE, ET, and AFQ. DTIInit runs preprocessing steps, MRTrix3 + Ensemble Tractography + LiFE generate a connectome which is then run through Automated Fiber Quantification (AFQ). AFQ generates tract profiles of tissue properties for major fiber tracts in the brain. This gear also generates AFQ Browser outputs for visualization. Required inputs are (1) DWI NIfTI image, (2) BVEC file, (3) BVAL file, and (4) and Anatomical NIfTI file - which is optional and will be used to align the DWI data, if provided.",
+  "label": "AFQ Pipeline: Automated Fiber Quantification Pipeline (DTIInit + MRtrix3 + ET + LiFE + AFQ). ",
+  "description": "DEBUG Edition. This gear contains a multi-step pipeline designed to run DTIInit, MRtrix3, LiFE, ET, and AFQ. DTIInit runs preprocessing steps, MRTrix3 + Ensemble Tractography + LiFE generate a connectome which is then run through Automated Fiber Quantification (AFQ). AFQ generates tract profiles of tissue properties for major fiber tracts in the brain. This gear also generates AFQ Browser outputs for visualization. Required inputs are (1) DWI NIfTI image, (2) BVEC file, (3) BVAL file, and (4) and Anatomical NIfTI file - which is optional and will be used to align the DWI data, if provided.",
   "maintainer": "Michael Perry <lmperry@stanford.edu>",
   "author": "Yeatman et al., Stanford VISTA Lab, FMRIB Software Lab, MRTrix, Pestilli et al., Takemura et al.",
   "cite": "Yeatman J.D., Dougherty R.F., Myall N.J., Wandell B.A., Feldman H.M. (2012). Tract Profiles of White Matter Properties: Automating Fiber-Tract Quantification. PLoS One.; M. Jenkinson, C.F. Beckmann, T.E. Behrens, M.W. Woolrich, S.M. Smith. FSL. NeuroImage, 62:782-90, 2012.  Evaluation and statistical inference for human connectomes. F. Pestilli, J.D. Yeatman, A. Rokem, K.N. Kay & B.A. Wandell (2014) Nature Methods doi:10.1038/nmeth.3098 Published online 07 September 2014. https://mrtrix.readthedocs.io/en/latest/reference/references.html.  Takemura H, Caiafa CF, Wandell BA, Pestilli F (2016) Ensemble Tractography. PLoS Comput Biol 12(2): e1004692. https://doi.org/10.1371/journal.pcbi.1004692",
@@ -9,11 +9,11 @@
   "source": "https://github.com/scitran-apps/afq-pipline",
   "license": "Other",
   "flywheel": "0",
-  "version": "3.0.2",
+  "version": "3.0.4",
   "custom": {
-    "docker-image": "scitran/afq-pipeline:3.0.2"
+    "docker-image": "scitran/afq-pipeline:3.0.4",
     "gear-builder": {
-      "image": "scitran/afq-pipeline:3.0.2"
+      "image": "scitran/afq-pipeline:3.0.4"
     }
   },
   "inputs": {
@@ -104,17 +104,17 @@
     "dwOutMm_1": {
       "description": "DTIINIT: Resolution of the output in mm. DEFAULT=2",
       "type": "number",
-      "default": 1
+      "default": 2
     },
     "dwOutMm_2": {
       "description": "DTIINIT: Resolution of the output in mm. DEFAULT=2",
       "type": "number",
-      "default": 1
+      "default": 2
     },
     "dwOutMm_3": {
       "description": "DTIINIT: Resolution of the output in mm. DEFAULT=2",
       "type": "number",
-      "default": 1
+      "default": 2
     },
     "rotateBvecsWithRx": {
       "description": "DTIINIT: Rotate the b-vectors according to the scanner prescription. 0=false, 1=true. DEFAULT=0",
@@ -153,7 +153,7 @@
     },
     "maxDist": {
       "description": "AFQ: Remove fibers that are more than 'maxDist' standard deviations from the core of the tract. (Default = 5 standard deviations). cleanFibers must be set to 1.",
-      "default": 5,
+      "default": 4,
       "type": "integer"
     },
     "maxLen": {
@@ -178,7 +178,7 @@
     },
     "cleanClippedFibers": {
       "description": "AFQ: If cleanFibers == 1, then this will indicate whether to perform the cleaning on just the clipped portion of the tract or on the full tract. This may be helpful for tracts like the ILF that are extremely messy with looping fibers etc.",
-      "default": 0,
+      "default": 1,
       "type": "integer"
     },
     "savefigs": {
@@ -203,7 +203,7 @@
     },
     "imresample": {
       "description": "AFQ: For additional images that are passed into AFQ you can set a resolution to resample those images to before computing tract profiles (e.g., [2 2 2])",
-      "default": 0,
+      "default": 1,
       "type": "integer"
     },
     "track_algorithm": {
@@ -212,27 +212,27 @@
       "default": "mrtrix"
     },
     "track_stepSizeMm": {
-      "description": "AFQ: Distance between steps in the tractography algorithm.",
+      "description": "AFQ: Distance between steps in the tractography algorithm. Mrtrix uses defaults.",
       "default": 1,
       "type": "integer"
     },
     "track_faThresh": {
-      "description": "AFQ: Stopping criteria FA<0.2",
+      "description": "AFQ: Stopping criteria FA<0.2. Mrtrix uses defaults depending on the algo. See mrTrix docs",
       "default": 0.2,
       "type": "number"
     },
     "track_minLengthThreshMm": {
-      "description": "AFQ: Discard Fibers shorter than this threshold in mm.",
+      "description": "AFQ: Discard Fibers shorter than this threshold in mm. For mrTrix, use ET_minlength, for both ET or not ET.",
       "default": 50,
       "type": "integer"
     },
     "track_maxLengthThreshMm": {
-      "description": "AFQ: Discard Fibers longer than this threshold in mm.",
+      "description": "AFQ: Discard Fibers longer than this threshold in mm. For mrTrix, use ET_maxlength, for both ET or not ET.",
       "default": 250,
       "type": "integer"
     },
     "track_angleThresh": {
-      "description": "AFQ: Stopping criteria angle between steps >30 degrees.",
+      "description": "AFQ: Stopping criteria angle between steps >30 degrees. For mrTrix, use ET_angleValues, for both ET or not ET.",
       "default": 30,
       "type": "integer"
     },
@@ -242,7 +242,7 @@
       "type": "number"
     },
     "track_whichAlgorithm": {
-      "description": "AFQ: Algorithm type for tractography (0=STT Euler, 1=STT RK4, 2=TEND Euler, 3=TEND RK4). Default is STT. See: Basser PJ, Pajevic S, Pierpaoli C, Duda J, Aldroubi A. 2000. In vivo fiber tractography using DT-MRI data. Magnetic Resonance in Medicine 44(4):625-32.",
+      "description": "AFQ: Algorithm type for tractography (0=STT Euler, 1=STT RK4, 2=TEND Euler, 3=TEND RK4). Default is STT. See: Basser PJ, Pajevic S, Pierpaoli C, Duda J, Aldroubi A. 2000. In vivo fiber tractography using DT-MRI data. Magnetic Resonance in Medicine 44(4):625-32. Not used by mrTrix.",
       "default": 1,
       "type": "integer"
     },
@@ -267,12 +267,12 @@
       "type": "number"
     },
     "track_faMaskThresh": {
-      "description": "AFQ: FA mask threshold from which to initialize tracking.",
+      "description": "AFQ: FA mask threshold from which to initialize tracking. It is used to create the wmMask that is used to seed the whole brain connectome in mrTrix",
       "default": 0.3,
       "type": "number"
     },
     "track_nfibers": {
-      "description": "AFQ: Number of fibers to track. This parameter is only relevant for mrTrix.",
+      "description": "AFQ: Number of fibers to track. This parameter is only relevant for mrTrix without ET. We will remove it in the future.",
       "default": 200000,
       "type": "integer"
     },
@@ -288,12 +288,12 @@
     },
     "mrtrix_autolmax": {
       "description": "MRTRIX: Calculate lmax automatically from number of directions. DEFAULT=True",
-      "default": true,
+      "default": false,
       "type": "boolean"
     },
     "mrtrix_lmax": {
       "description": "MRTRIX: specify lmax for CSD. Only used if mrtrix_autolmax==0. DEFAULT=4",
-      "default": 8,
+      "default": 6,
       "type": "integer"
     },
     "mrtrix_multishell": {
@@ -348,7 +348,7 @@
     },
     "ET_runET": {
       "description": "ET: Run Ensemble Tractography. DEFAULT=False",
-      "default": true,
+      "default": false,
       "type": "boolean"
     },
     "ET_numberFibers": {
@@ -357,17 +357,17 @@
       "type": "number"
     },
     "ET_minlength": {
-      "description": "ET: Minimum fiber length (in mm). DEFAULT=10",
-      "default": 20,
+      "description": "ET: Minimum fiber length (in mm). This value will be used for mrTrix regardless of ET. If 999, the default from mrTrix will be used (see mrTrix documentation). DEFAULT=999",
+      "default": 999,
       "type": "number"
     },
     "ET_maxlength": {
-      "description": "ET: Maximum fiber length (in mm). DEFAULT=250",
-      "default": 250,
+      "description": "ET: Maximum fiber length (in mm). This value will be used for mrTrix regardless of ET. If 999, the default from mrTrix will be used (see mrTrix documentation). DEFAULT=999",
+      "default": 999,
       "type": "number"
     },
     "ET_angleValues": {
-      "description": "ET: Angle cutoff values to use during ET tracking (comma-separated list). DEFAULT='47.2, 23.1, 11.5, 5.7, 2.9'",
+      "description": "ET: Angle cutoff values to use during ET tracking (comma-separated list). If ET is not selected the mrTrix default will be used (see mrTrix documentation).  DEFAULT='47.2, 23.1, 11.5, 5.7, 2.9'",
       "default": "47.2, 23.1, 11.5, 5.7, 2.9",
       "type": "string"
     }

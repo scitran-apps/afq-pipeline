@@ -56,7 +56,6 @@ RUN apt-get update && apt-get install -y --force-yes \
     wget \
     subversion \
     fsl-5.0-core \
-    fsl-first-data \
     jq \
     ants
 
@@ -92,28 +91,6 @@ ENV PATH /usr/lib/mrtrix3/bin:$PATH
 
 
 ############################
-# AFQ
-
-# ADD the source Code and Binary to the container
-COPY afq/source/bin/compiled/AFQ_StandAlone_QMR /usr/local/bin/AFQ
-COPY afq/run ${FLYWHEEL}/run_afq
-COPY afq/source/parse_config.py ${FLYWHEEL}/afq_parse_config.py
-RUN chmod +x /usr/local/bin/AFQ ${FLYWHEEL}/afq_parse_config.py
-
-# Add bet2 (FSL) to the container
-ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrAnatomy/Segment/bet2 /usr/local/bin/
-
-# ADD AFQ and mrD templates via svn hackery
-ENV TEMPLATES /templates
-RUN mkdir $TEMPLATES
-RUN svn export --force https://github.com/scitran/AFQ.git/trunk/templates/ $TEMPLATES
-RUN svn export --force https://github.com/vistalab/vistasoft.git/trunk/mrDiffusion/templates/ $TEMPLATES
-
-# Set the diplay env variable for xvfb
-ENV DISPLAY :1.0
-
-
-############################
 # DTIINIT
 
 # ADD the dtiInit Matlab Stand-Alone (MSA) into the container.
@@ -121,6 +98,12 @@ COPY dtiinit/source/bin/dtiInitStandAloneWrapper /usr/local/bin/dtiInit
 
 # Add bet2 (FSL) to the container
 ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrAnatomy/Segment/bet2 /usr/local/bin/
+
+# ADD AFQ and mrD templates via svn hackery
+ENV TEMPLATES /templates
+RUN mkdir $TEMPLATES
+RUN svn export --force https://github.com/yeatmanlab/AFQ.git/trunk/templates/ $TEMPLATES
+RUN svn export --force https://github.com/vistalab/vistasoft.git/trunk/mrDiffusion/templates/ $TEMPLATES
 
 # Add the MNI_EPI template and JSON schema files to the container
 ADD https://github.com/vistalab/vistasoft/raw/97aa8a8/mrDiffusion/templates/MNI_EPI.nii.gz $TEMPLATES
@@ -173,22 +156,34 @@ COPY afq-browser/run ${FLYWHEEL}/run_afq-browser.py
 ############################
 # AFQ
 
+
+# THIS IS IF WE ARE USING THE GIT LFS VERSION
 # Install git-lfs
-RUN apt-get install -y software-properties-common && \
-    add-apt-repository -y ppa:git-core/ppa && \
-    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
-    apt-get install -y git-lfs && \
-    git lfs install
+# RUN apt-get install -y software-properties-common && \
+#     add-apt-repository -y ppa:git-core/ppa && \
+#     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
+#     apt-get install -y git-lfs && \
+#     git lfs install
 
 # Download binary from git-lfs
-WORKDIR /tmp
-ENV COMMIT 9a8c9c9
-RUN git clone https://github.com/scitran-apps/afq-pipeline.git && \
-    cd /tmp/afq-pipeline && \
-    git reset ${COMMIT} && \
-    git lfs pull && \
-    cp /tmp/afq-pipeline/afq/source/bin/compiled/AFQ_StandAlone_QMR /usr/local/bin/AFQ
+# WORKDIR /tmp
+# ENV COMMIT 9a8c9c9
+# RUN git clone https://github.com/scitran-apps/afq-pipeline.git && \
+#     cd /tmp/afq-pipeline && \
+#     git reset ${COMMIT} && \
+#     git lfs pull && \
+#     cp /tmp/afq-pipeline/afq/source/bin/compiled/AFQ_StandAlone_QMR /usr/local/bin/AFQ
 
+
+# AND THIS IF WE ARE COPYING THE BINARY FROM LOCAL
+# ADD the source Code and Binary to the container
+COPY afq/source/bin/compiled/AFQ_StandAlone_QMR /usr/local/bin/AFQ
+COPY afq/run ${FLYWHEEL}/run_afq
+COPY afq/source/parse_config.py ${FLYWHEEL}/afq_parse_config.py
+RUN chmod +x /usr/local/bin/AFQ ${FLYWHEEL}/afq_parse_config.py
+
+
+# AND THIS WAS COMMON
 # ADD the source Code and Binary to the container
 COPY afq/run ${FLYWHEEL}/run_afq
 COPY afq/source/parse_config.py ${FLYWHEEL}/afq_parse_config.py
@@ -205,3 +200,4 @@ COPY run ${FLYWHEEL}/run
 RUN chmod +x ${FLYWHEEL}/*
 ENTRYPOINT ["/flywheel/v0/run"]
 COPY manifest.json ${FLYWHEEL}/manifest.json
+
