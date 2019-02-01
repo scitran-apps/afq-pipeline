@@ -28,6 +28,12 @@ jsonargs = ['{"input_dir" :' ...
             '"/data/localhome/glerma/TESTDATA/AFQ/output/MareikeS13", ' ...
             '"params"    : ' ...
             '"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}']
+jsonargs = ['{"input_dir" :' ...
+            '"/Volumes/users/glerma/TESTDATA/AFQ/input/MareikeS13/dti96trilin",' ...
+            '"output_dir": ' ...
+            '"/Volumes/users/glerma/TESTDATA/AFQ/output/MareikeS13", ' ...
+            '"params"    : ' ...
+            '"/Volumes/users/glerma/TESTDATA/AFQ/input/config_parsed.json"}']
 %       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/output/MareikeS03b/afq_20-Dec-2018_19h34m56s/dti96trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/MareikeS03","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
        
 AFQ_StandAlone_QMR(jsonargs);
@@ -222,6 +228,137 @@ for ii = 1:numel(properties)
         writetable(T,fullfile(csv_dir,['AFQ_' lower(properties{ii}) '.csv']));
     end
 end
+
+%% Create the tck files for visualizing the results
+%{
+We want to see the following things for checking the quality and/or continuing
+the processing of the tracts. 
+Visualize (all after alignment):
+      T1w file
+      5tt file (hopefuly based on FS-s aparc+aseg.mgz)
+      _fa.mif
+      _brainmask.mif
+      _wmMask.mif and _wMask_dilated.mif
+      _csd file, usually a good idea to check in the first subject to check
+          bvec alignment
+Visualize final results (first check if the values make sense)
+      whole tractogram.tck: how does it fill the WM?
+      TRACTS
+        - Uncleaned
+        - Cleaned
+        - ROIs
+        
+%}
+
+disp('Creating the tck files for visualization and QA...');
+% We will add the diffusion parameters and the series number to the name
+vis_dir = fullfile(output_dir,'vis_files');
+mkdir(vis_dir);
+
+% First of all we will copy all the files present in the dtiInit root to afq so
+% that everything is in the same zip
+inputParts  = split(input_dir, filesep);
+predti = strjoin(inputParts(1:(length(inputParts)-1)), filesep);
+copyfile([predti '/*.mat'], output_dir);
+copyfile([predti '/*.bv*'], output_dir);
+copyfile([predti '/*.nii*'], output_dir);
+
+% Obtain the files
+if isdeployed
+    % Convert the ROIs from mat to .nii.gz
+    % Read the b0
+    img  = niftiRead(fullfile(input_dir, 'bin', 'b0.nii.gz'));
+    % Obtain the ROIs in nifti to check if they look ok or not
+    rois = dir(fullfile(input_dir, 'ROIs', '*.mat'));
+    for df=1:length(rois)
+        roiFullPath = fullfile(input_dir, 'ROIs',rois(df).name);
+        roi         = dtiReadRoi(roiFullPath);
+        coords      = roi.coords;
+        % Convert vertex acpc coords to img coords
+        imgCoords  = mrAnatXformCoords(img.qto_ijk, coords);
+        % Get coords for the unique voxels
+        imgCoords = unique(ceil(imgCoords),'rows');
+        % Make a 3D image
+        roiData = zeros(img.dim);
+        roiData(sub2ind(img.dim, imgCoords(:,1), imgCoords(:,2), imgCoords(:,3))) = 1;
+        % Change img data
+        img.data = roiData;
+        img.cal_min = min(roiData(:));
+        img.cal_max = max(roiData(:));
+        % Write the nifti file
+        [~,roiNameWoExt] = fileparts(roiFullPath);
+        img.fname = fullfile(fileparts(roiFullPath), [roiNameWoExt,'.nii.gz']); 
+        writeFileNifti(img);     
+    end
+    % Convert the segmented fg-s to tck so that we can see them in mrview
+    % In the future we will make them obj so that they can be visualized in FW
+    FGs = dir(fullfile(input_dir, 'fibers', 'Mori*.mat'));
+    for nf = 1:length(FGs)
+        fgname             = fullfile(input_dir, 'fibers', FGs(nf).name);
+        fg                 = fgRead(fgname);
+        saveToMrtrixFolder = true; createObjFiles     = true; 
+        AFQ_FgToTck(fg, fgname, saveToMrtrixFolder, createObjFiles)
+    end
+    % Now we can copy the output to the vis_files, and decide later if copying
+    % it to results so that it can be visualized in FW
+    
+else
+    % This will be used to download the files when using matlab online:
+    % The important part is to make work the isdeployed part. 
+    % The code below will be run usually manually, usually for older FW analysis
+    % that didn't have the previous code.
+    st                    = scitran('stanfordlabs');
+    colecName             = '00_VIS';
+    analysisLabelContains = 'AllV02: Analysis afq-pipeline-3';
+    zipNameContains       = 'AFQ_Output_';
+    listOfFilesContain    = {'MoriGroups_clean','_wmMask.mif','_wmMask_dilated.mif', ...
+                             '_fa.mif', 'b0.nii.gz','_L.mat','_R.mat'};
+    downloadDir           = '/Users/glerma/Downloads/AllV02';
+    downFiles             = dr_fwDownloadFileFromZip(st, colecName, zipNameContains, ...
+                             'analysisLabelContains', analysisLabelContains, ...
+                             'filesContain'         , listOfFilesContain, ...
+                             'downloadTo'           , downloadDir, ...
+                             'showListSession'      , false);
+    % Read template in the same space to write the .mats
+    b0Path = downFiles{contains(downFiles,'bin/b0.nii.gz')};
+    img = niftiRead(b0Path);
+    
+    for df=1:length(downFiles)
+        if contains(downFiles{df}, 'fibers/MoriGroups')
+            fg       = fgRead(downFiles{df});
+            saveToMrtrixFolder = true;
+            createObjFiles     = false; % we want this in FW, not locally
+            AFQ_FgToTck(fg, downFiles{df}, saveToMrtrixFolder, createObjFiles)
+        end
+        if contains(downFiles{df}, 'ROIs/')
+            roi = dtiReadRoi(downFiles{df});
+            coords = roi.coords;
+            % convert vertex acpc coords to img coords
+            imgCoords  = mrAnatXformCoords(img.qto_ijk, coords);
+            % get coords for the unique voxels
+            imgCoords = unique(ceil(imgCoords),'rows');
+            % make a 3D image
+            roiData = zeros(img.dim);
+            roiData(sub2ind(img.dim, imgCoords(:,1), imgCoords(:,2), imgCoords(:,3))) = 1;
+            % change img data
+            img.data = roiData;
+            img.cal_min = min(roiData(:));
+            img.cal_max = max(roiData(:));
+            % write the nifti file
+            [~,roiNameWoExt] = fileparts(downFiles{df});
+            img.fname = fullfile(fileparts(downFiles{df}), [roiNameWoExt,'.nii.gz']); 
+            writeFileNifti(img);
+        end
+    end
+
+
+end
+
+
+
+
+
+
 
 
 %% Create Plots and save out the images
