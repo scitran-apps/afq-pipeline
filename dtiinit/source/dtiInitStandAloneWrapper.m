@@ -236,7 +236,7 @@ else
 end
 
 % Write the files back
-warning('The bVals were normalized.\n')
+warning('The bVals were normalized.')
 dlmwrite(J.bval_file, roundedBval, 'delimiter',' ');
 
 %% Run dtiInit
