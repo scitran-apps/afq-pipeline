@@ -292,6 +292,25 @@ if isdeployed
     end
     % Convert the segmented fg-s to tck so that we can see them in mrview
     % In the future we will make them obj so that they can be visualized in FW
+    % First create another two MoriSuperFibers out of the clipped and not
+    % clipped ones. 
+    FGs = dir(fullfile(input_dir, 'fibers', 'Mori*.mat'));
+    for nf = 1:length(FGs)
+        fgname             = fullfile(input_dir, 'fibers', FGs(nf).name);
+        fg                 = fgRead(fgname);
+        fgSF               = fg;
+        % Change the fiber by the superfiber
+        for nf=1:length(fg)
+            [SuperFiber, sffg] = dtiComputeSuperFiberRepresentation(fg(nf),[],100);
+            fgSF(nf).fibers= SuperFiber.fibers;
+        end
+        % Save the clipped ones as well for QA
+        [path, fname, fext] = fileparts(fgname);
+        sfFgName = fullfile(path,[fname '_SF' fext]);
+        dtiWriteFiberGroup(fgSF, sfFgName);
+    end
+    % Now we will have the same and the newly created ones, that we will
+    % create the superFibers.
     FGs = dir(fullfile(input_dir, 'fibers', 'Mori*.mat'));
     for nf = 1:length(FGs)
         fgname             = fullfile(input_dir, 'fibers', FGs(nf).name);
@@ -322,8 +341,12 @@ else
     % Read template in the same space to write the .mats
     b0Path = downFiles{contains(downFiles,'bin/b0.nii.gz')};
     img = niftiRead(b0Path);
-    
+    MoriCleans = {}; nMC = 0;
     for df=1:length(downFiles)
+        if contains(downFiles{df}, 'fibers/MoriGroups_clean')
+            nMC = nMC + 1;
+            MoriCleans{nMC} = downFiles{df};
+        end
         if contains(downFiles{df}, 'fibers/MoriGroups')
             fg       = fgRead(downFiles{df});
             saveToMrtrixFolder = true;
@@ -350,16 +373,41 @@ else
             writeFileNifti(img);
         end
     end
-
-
+    % We need to create the clipped fibers for visualization
+    % Copy the same code used inside AFQ to do the same, we will create a
+    % new Mori file and the obtain the tck-s as fot the other Mori-groups
+    % For this, we need to be sure that all the roi-s have been
+    % downloaded previously...
+    for nMC=length(MoriCleans)
+        fg_clip = fgRead(MoriCleans{nMC});
+        dtiDir  = strrep(fileparts(MoriCleans{nMC},'/fibers',''));
+        % Remove all fibers that are too long and too far from the core of
+        % the group.  This algorithm will constrain the fiber group to
+        % something that can be reasonable represented as a 3d gaussian
+        for jj = 1:20
+            % load ROIs
+            [roi1, roi2] = AFQ_LoadROIs(jj,dtiDir);
+            fg_clip(jj) = dtiClipFiberGroupToROIs(fg_clean(jj),roi1,roi2);
+        end
+        % Save the clipped ones as well for QA
+        [path, fname, fext] = fileparts(MoriCleans{nMC});
+        clippedFgName       = fullfile(path,[fname '_CLIPPED' fext]);
+        dtiWriteFiberGroup(fg_clip, clippedFgName);
+        % Obtain the superfiber of the cleaned one first
+        fgClipSF = fg_clip;
+        % Change the fiber by the superfiber
+        for nf=1:length(fg)
+            SuperFiber = dtiComputeSuperFiberRepresentation(fg_clip(nf),[],100);
+            fgClipSF(nf).fibers= SuperFiber.fibers;
+        end
+        % Save the clipped ones as well for QA
+        sfClipFgName = fullfile(path,[fname '_CLIPPED_SF' fext]);
+        dtiWriteFiberGroup(fgClipSF, sfClipFgName);
+        % In the same place we have the clipped and the clippedSF, create tcks
+        AFQ_FgToTck(fg_clip, clippedFgName, saveToMrtrixFolder, createObjFiles)
+        AFQ_FgToTck(fgClipSF, sfClipFgName, saveToMrtrixFolder, createObjFiles)
+    end
 end
-
-
-
-
-
-
-
 
 %% Create Plots and save out the images
 %{

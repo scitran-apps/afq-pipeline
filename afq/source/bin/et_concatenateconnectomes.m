@@ -81,4 +81,4 @@ end
 fg_etc.fibers = transpose(fg_etc.fibers);
 
 % Write file
-fgWrite(fg_etc, fname, saveType);
+AFQ_fgWrite(fg_etc, fname, saveType);

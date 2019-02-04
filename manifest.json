@@ -9,11 +9,11 @@
   "source": "https://github.com/scitran-apps/afq-pipline",
   "license": "Other",
   "flywheel": "0",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "custom": {
-    "docker-image": "scitran/afq-pipeline:3.0.4",
+    "docker-image": "scitran/afq-pipeline:3.0.5",
     "gear-builder": {
-      "image": "scitran/afq-pipeline:3.0.4"
+      "image": "scitran/afq-pipeline:3.0.5"
     }
   },
   "inputs": {
@@ -217,8 +217,8 @@
       "type": "integer"
     },
     "track_faThresh": {
-      "description": "AFQ: Stopping criteria FA<0.2. Mrtrix uses defaults depending on the algo. See mrTrix docs",
-      "default": 0.2,
+      "description": "AFQ: Stopping criteria FA<0.2. Mrtrix uses defaults depending on the algo and depending on the algo these number will refer to FA or FOD. If 999 use the defaults, otherwise use the value here. See mrTrix docs for defaults",
+      "default": 999,
       "type": "number"
     },
     "track_minLengthThreshMm": {
