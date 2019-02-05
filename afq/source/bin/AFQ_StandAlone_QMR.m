@@ -301,7 +301,7 @@ if isdeployed
         fgSF               = fg;
         % Change the fiber by the superfiber
         for nf=1:length(fg)
-            [SuperFiber, sffg] = dtiComputeSuperFiberRepresentation(fg(nf),[],100);
+            [SuperFiber] = dtiComputeSuperFiberRepresentation(fg(nf),[],100);
             fgSF(nf).fibers= SuperFiber.fibers;
         end
         % Save the clipped ones as well for QA

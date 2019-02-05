@@ -25,7 +25,7 @@ if [[ $exit_status != 0 ]]; then
   echo "$CONTAINER  DTIINIT failure!"
   exit $exit_status
 fi
-
+###############################################################################
 
 ###############################################################################
 # AFQ
@@ -42,20 +42,25 @@ if [[ $exit_status != 0 ]]; then
   echo "$CONTAINER  AFQ failure!"
   exit $exit_status
 fi
+###############################################################################
 
+# Delete the working folders only if it has been succesful, otherwise the folders
+# will remain in the input folder for debugging
+rm -rf $INPUT_DIR/work
+rm -rf $INPUT_DIR/dtiInit_Archive
 
 ###############################################################################
 # AFQ-BROWSER
 
-mkdir /tmp/afq
-${FLYWHEEL_BASE}/run_afq-browser.py
-exit_status=$?
+# mkdir /tmp/afq
+# ${FLYWHEEL_BASE}/run_afq-browser.py
+# exit_status=$?
 
-if [[ $exit_status != 0 ]]; then
-  echo "$CONTAINER  AFQ-BROWSER failure!"
-  #exit $exit_status
-fi
-
+# if [[ $exit_status != 0 ]]; then
+#   echo "$CONTAINER  AFQ-BROWSER failure!"
+#   #exit $exit_status
+# fi
+###############################################################################
 
 echo "$CONTAINER  DONE!"
 

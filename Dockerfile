@@ -56,6 +56,7 @@ RUN apt-get update && apt-get install -y --force-yes \
     wget \
     subversion \
     fsl-5.0-core \
+    fsl-first-data \
     jq \
     ants
 
@@ -126,31 +127,31 @@ COPY dtiinit/source/parse_config.py ${FLYWHEEL}/dtiinit_parse_config.py
 
 ############################
 # AFQ Browser
-
-RUN apt-get update -qq \
-    && apt-get install -y \
-    git \
-    python-dev \
-    libblas-dev \
-    liblapack-dev \
-    libatlas-base-dev \
-    gfortran \
-    python-numpy \
-    python-pandas \
-    python-scipy \
-    python-pip
+# It built the docker container but then it failed in the execution. Just removing it, never used. 
+# RUN apt-get update -qq \
+#     && apt-get install -y \
+#     git \
+#     python-dev \
+#     libblas-dev \
+#     liblapack-dev \
+#     libatlas-base-dev \
+#     gfortran \
+#     python-numpy \
+#     python-pandas \
+#     python-scipy \
+#     python-pip
 
 # We need to start by upgrading setuptools, or run into https://github.com/yeatmanlab/AFQ-Browser/issues/101
-RUN pip install --upgrade setuptools
+# RUN pip install --upgrade setuptools
 
 # Bust the cache to force the next steps:
-ENV BUSTCACHE 11
+# ENV BUSTCACHE 11
 
 # Install AFQ-Browser from my branch:
-RUN pip install git+https://github.com/arokem/AFQ-Browser.git@zip
+# RUN pip install git+https://github.com/arokem/AFQ-Browser.git@zip
 
 # Copy AFQ Browser run
-COPY afq-browser/run ${FLYWHEEL}/run_afq-browser.py
+# COPY afq-browser/run ${FLYWHEEL}/run_afq-browser.py
 
 
 ############################

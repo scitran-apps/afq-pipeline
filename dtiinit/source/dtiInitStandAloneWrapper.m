@@ -240,8 +240,12 @@ warning('The bVals were normalized.')
 dlmwrite(J.bval_file, roundedBval, 'delimiter',' ');
 
 %% Run dtiInit
-
-dtiInit(J.dwi_file, J.t1_file, dwParams);
+% From 3.0.5 onwards I am forking dtiInit and giving it less
+% functionalities. I will remove the tensor fitting and do it with mrTrix,
+% it is much faster and the rest of the code relies in it anyways. 
+% First iteration, stop dtiInit doing it and later on mrtrixInit will paste
+% the fa to the bin folder. 
+AFQ_dtiInit(J.dwi_file, J.t1_file, dwParams);
 disp('***************** IMPORTANT *****************')
 disp(sprintf('Copying the following files from dtiInit to AFQ: %s and %s',J.t1_file,J.aparcaseg_file))
 disp('***************** IMPORTANT *****************')
