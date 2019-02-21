@@ -81,7 +81,14 @@ function dtiInitStandAloneWrapper(json)
 % 
 % Use compile.sh for compiling
 % Use this command to launch in matlab
-%   dtiInitStandAloneWrapper('/data/localhome/glerma/soft/afq-pipeline/dtiinit/source/dtiInit.json')
+%{
+
+jsonPath = '/data/localhome/glerma/soft/afq-pipeline/dtiinit/source';
+  % dtiInitStandAloneWrapper(fullfile(jsonPath,'dtiInit.json'));
+  dtiInitStandAloneWrapper(fullfile(jsonPath,'dtiInit_with_aparcAseg_4ltozziMS.json'));
+  % dtiInitStandAloneWrapper(fullfile(jsonPath,'dtiInit_with_aparcAseg_4HCPMS.json'));
+
+%}
 % Use this command to run the docker in the directory
 % 
 % (C) Vista Lab, Stanford University, 2015

@@ -34,7 +34,13 @@ jsonargs = ['{"input_dir" :' ...
             '"/Volumes/users/glerma/TESTDATA/AFQ/output/MareikeS13", ' ...
             '"params"    : ' ...
             '"/Volumes/users/glerma/TESTDATA/AFQ/input/config_parsed.json"}']
-%       jsonargs = '{"input_dir" : "/data/localhome/glerma/TESTDATA/AFQ/output/MareikeS03b/afq_20-Dec-2018_19h34m56s/dti96trilin", "output_dir": "/data/localhome/glerma/TESTDATA/AFQ/output/MareikeS03","params"    :"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}'
+
+jsonargs = ['{"input_dir" :' ...
+            '"/data/localhome/glerma/TESTDATA/AFQ/input/dtiInit_LTOZZI/dti150trilin",' ...
+            '"output_dir": ' ...
+            '"/data/localhome/glerma/TESTDATA/AFQ/output/ltozzi", ' ...
+            '"params"    : ' ...
+            '"/data/localhome/glerma/TESTDATA/AFQ/input/config_parsed.json"}']
        
 AFQ_StandAlone_QMR(jsonargs);
 %}
@@ -300,9 +306,11 @@ if isdeployed
         fg                 = fgRead(fgname);
         fgSF               = fg;
         % Change the fiber by the superfiber
-        for nf=1:length(fg)
-            [SuperFiber] = dtiComputeSuperFiberRepresentation(fg(nf),[],100);
-            fgSF(nf).fibers= SuperFiber.fibers;
+        for nsf=1:length(fg)
+            if ~isempty(fg(nsf).fibers)
+                [SuperFiber] = dtiComputeSuperFiberRepresentation(fg(nsf),[],100);
+                fgSF(nsf).fibers= SuperFiber.fibers;
+            end
         end
         % Save the clipped ones as well for QA
         [path, fname, fext] = fileparts(fgname);

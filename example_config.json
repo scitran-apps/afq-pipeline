@@ -25,7 +25,7 @@
     "savefigs": 1,
     "computeCSD": 1,
     "computenorms":1,
-    "normalization":"spm",
+    "normalization":"ants",
     "imresample": 1,
     "track_algorithm": "mrtrix",
     "track_stepSizeMm": 1,
