@@ -9,11 +9,11 @@
   "source": "https://github.com/scitran-apps/afq-pipeline",
   "license": "Other",
   "flywheel": "0",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "custom": {
-    "docker-image": "scitran/afq-pipeline:3.0.7",
+    "docker-image": "scitran/afq-pipeline:3.0.8",
     "gear-builder": {
-      "image": "scitran/afq-pipeline:3.0.7"
+      "image": "scitran/afq-pipeline:3.0.8"
     }
   },
   "inputs": {
